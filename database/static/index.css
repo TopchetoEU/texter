@@ -1,0 +1,13 @@
+table {
+    width: 100%;
+}
+h1,h2 {
+    text-align: center;
+}
+h3 {
+    margin: .1em;
+    margin-left: 1em;
+}
+bl {
+    color: rgb(46, 150, 150);
+}

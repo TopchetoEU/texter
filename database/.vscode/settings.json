@@ -1,0 +1,9 @@
+{
+    "files.autoGuessEncoding": true,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 10000,
+    "files.insertFinalNewline": true,
+    "editor.snippetSuggestions": "top",
+    "editor.suggest.localityBonus": true,
+    "eslint.autoFixOnSave": true
+}

@@ -1,0 +1,24 @@
+Article - {
+    Title: string,
+    Content: string,
+    CreatorID: number,
+    ID: number,
+    Likers: [number],
+    Dislikers: [numbers],
+    Comments: [Comment]
+}
+
+User - {
+    UserName: string,
+    ID: string,
+    Articles: [number],
+    Followers: [number],
+    Following: [number]
+}
+
+Comment - {
+    Content: string,
+    Replies: [Comment],
+    Likers: [number],
+    Dislikers: [numbers],
+}

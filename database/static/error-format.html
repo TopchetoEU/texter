@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Texter API - Index</title>
+        <link rel="stylesheet" href="/index.css">
+    </head>
+    <body>
+        <h1>The Texter API Documentation</h1>
+        <h2>Error format</h2>
+        <ul style="list-style: decimal;">
+            <li>
+                <b>Error: bool</b> - did a error occured
+            </li>
+            <li>
+                <b>ErrorDetails</b> - if error occured, you get the details about it, else this is undefined
+                <ul>
+                    <li>
+                        <b>General: string</b> - general info about the error
+                    </li>
+                    <li>
+                        <b>More: string</b> - more information about the error
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>

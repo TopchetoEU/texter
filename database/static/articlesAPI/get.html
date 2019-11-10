@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Texter API - Index</title>
+        <link rel="stylesheet" href="/index.css">
+    </head>
+    <body>
+        <h1>The Texter API Documentation</h1>
+        <h2>/articles/get - get by selector</h2>
+        <ul style="list-style: decimal;">
+            <li>
+                <b>Body:</b>
+                <ul>
+                    <li>
+                        <b>Selector: object</b> - the way you wanna find the item (see mongodb refrence)
+                    </li>
+                    <li>
+                        <b>DoPaging: boolean</b> - is the result is gonna be paged
+                    </li>
+                    <li>
+                        <b>Paging</b> - all paging settings
+                        <ul>
+                            <li>
+                                <b>PageSize: number</b> - the size of the page
+                            </li>
+                            <li>
+                                <b>PageCount: number</b> - the number of the page
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <b>Result</b>
+                <ul>
+                    <li>
+                        <b>Found: Article[]</b> - <a href="/articlesAPI/type.html">(read about article type)</a>
+                    </li>
+                    <li>
+                        <b>Error: ErrorFormat</b> - read about error format at <a href="/error-format.html">this link</a>
+                    </li>
+
+                </ul>
+            </li>
+            <li>
+                <b>Possible errors</b>
+                <ul >
+                    <li>
+                        <b>Missing property Selector</b> - Make sure you're providing selector and you didn't misspelled it
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </body>
+</html>
