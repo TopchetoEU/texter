@@ -8,19 +8,37 @@ export class DatabaseService {
 
   public Users = {
     Get: {
-      All: (callback: (users: User[]) => void): void => {
+      All: (): Promise<User[]> => {
         HTTP.Post('http://46.249.77.12:4001/users/get', {
           Selector: {}
         }, (users) => {
-          callback(users.Found);
+          return Promise.resolve(users.Found);
         });
+        throw null;
       },
-      ById: (id: number, callback: (users: User[]) => void) => {
+      ById: (id: number): Promise<User> => {
         HTTP.Post('http://46.249.77.12:4001/users/get', {
           Selector: { ID: id },
         }, (res) => {
-          callback(res.Found);
+          if (res.Found.length === 1) {
+            return Promise.resolve(res.Found[0]);
+          } else {
+            return Promise.reject({ Error: "No user found" });
+          }
         });
+        throw null;
+      },
+      ByName: (name: string): Promise<User> => {
+        HTTP.Post('http://46.249.77.12:4001/users/get', {
+          Selector: { Username: name },
+        }, (res) => {
+          if (res.Found.length === 1) {
+            return Promise.resolve(res.Found[0]);
+          } else {
+            return Promise.reject({ Error: "User doesn't exists" });
+          }
+        });
+        throw null;
       }
     }
   };
@@ -33,19 +51,21 @@ export class DatabaseService {
           callback(articles.Found);
         });
       },
-      BySelector: (selector: any, callback: (articles: Article[]) => void): void => {
+      BySelector: (selector: any): Promise<Article[]> => {
         HTTP.Post('http://46.249.77.12:4001/articles/get', {
           Selector: selector
         }, (articles) => {
-          callback(articles.Found);
+          return Promise.resolve(articles.Found);
         });
+        return Promise.resolve(null);
       },
-      ById: (id: string, callback: (articles: Article[]) => void): void => {
+      ById: (id: string): Promise<Article[]> => {
         HTTP.Post('http://46.249.77.12:4001/articles/get', {
           Selector: { ID: id   }
         }, (articles) => {
-          callback(articles.Found);
+          return Promise.resolve(articles.Found);
         });
+        return Promise.resolve(null);
       }
     }
   };
