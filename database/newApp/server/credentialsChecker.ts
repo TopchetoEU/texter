@@ -20,46 +20,38 @@ export type CredentialsChecker = (
     credentials: Credentials,
     db: MongoClient,
     passwordRegEx: RegExp,
-    errors: any,
-    callback: ErrorCallback) => void;
+    errors: any) => Promise<{error: Error, success: boolean}>;
 
-export const DefaultCredentialsChecker = (
+export const  DefaultCredentialsChecker = async (
     creds: Credentials, db: MongoClient,
-    passRegEx: RegExp, errors: any,
-    cb: ErrorCallback) => {
+    passRegEx: RegExp, errors: any): Promise<{error: Error, success: boolean}> => {
         if (typeof creds === "undefined") {
-            cb(errors.Body.Missing.Credentials, false);
-            return;
+            return Promise.resolve({ error: errors.Body.Missing.Credentials, success: false});
         }
         if (typeof creds.UserId !== "number") {
-            cb(errors.Body.Missing.Credentials, false);
-            return;
+            return Promise.resolve({ error: errors.Body.Missing.Credentials, success: false });
         }
         if (typeof creds.Password !== "string") {
-            cb(errors.Body.Credentials.InvalidFormat, false);
-            return;
+            return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
         }
-        db.connect().then(() => {
-            db
+        await db.connect();
+        const users = await db
             .db("texter")
             .collection("users")
             .find({ ID: creds.UserId })
-            .toArray()
-            .then((users) => {
-                console.log(creds.Password.match(passRegEx).length);
-                if (users.length !== 1) {
-                    cb(errors.Body.MoreOrLessThanOne.Users, false);
-                } else if (typeof creds.Password !== "string") {
-                    cb(errors.Body.Credentials.InvalidFormat, false);
-                } else if (creds.Password.match(passRegEx).length !== 1) {
-                    cb(errors.Body.Credentials.InvalidFormat, false);
-                } else if (creds.Password.length < 8 || creds.Password.length > 64) {
-                    cb(errors.Body.Credentials.InvalidFormat, false);
-                } else if (users[0].Password !== sha256(creds.Password)) {
-                    cb(errors.Body.Credentials.Wrong, false);
-                } else {
-                    cb(null, true);
-                }
-            });
-        });
+            .toArray();
+        console.log(creds.Password.match(passRegEx).length);
+        if (users.length !== 1) {
+            return Promise.resolve({ error: errors.Body.MoreOrLessThanOne.Users, success: false });
+        } else if (typeof creds.Password !== "string") {
+            return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
+        } else if (creds.Password.match(passRegEx).length !== 1) {
+            return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
+        } else if (creds.Password.length < 8 || creds.Password.length > 64) {
+            return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
+        } else if (users[0].Password !== sha256(creds.Password)) {
+            return Promise.resolve({ error: errors.Body.Credentials.Wrong, success: false });
+        } else {
+            return Promise.resolve({ error: null, success: true });
+        }
 };

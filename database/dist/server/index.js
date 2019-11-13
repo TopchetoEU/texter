@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = require("body-parser");
 const express_1 = __importDefault(require("express"));
 const index_1 = require("./routers/index");
+const othersRouter_1 = require("./routers/othersRouter");
 function getServer(credentialsChecker, errors, db, config) {
     return express_1.default()
         .use((req, res, next) => {
@@ -20,6 +21,7 @@ function getServer(credentialsChecker, errors, db, config) {
     })
         .use("/articles", index_1.getArticlesRouter(db, errors, credentialsChecker, config.PasswordRegEx))
         .use("/users", index_1.getUsersRouter(db, errors, credentialsChecker, config.PasswordRegEx))
+        .use("/others", othersRouter_1.GetOthersRouter(db, errors, credentialsChecker, config.PasswordRegEx))
         .use(express_1.default.static("static"))
         .get("/", (req, res) => {
         res.redirect("/index.html");
