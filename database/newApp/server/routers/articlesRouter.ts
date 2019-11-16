@@ -179,6 +179,7 @@ export function GetArticlesRouter(
         })
         .post("/create", async (req, res) => {
             const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
+            console.log(req.body);
             if (typeof req.body.New === "undefined") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });

@@ -223,19 +223,16 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
         if (typeof req.body.New === "undefined") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
-            console.log("a");
             return;
         }
         else if (typeof req.body.New.Username === "undefined") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
-            console.log("b");
             return;
         }
         else if (typeof req.body.New.Password === "undefined") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
-            console.log("c");
             return;
         }
         else {
@@ -247,7 +244,6 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
                 .find({ Username: req.body.New.Username })
                 .toArray();
             if (r.length > 0) {
-                console.log(r);
                 res.status(400);
                 res.send({ Error: errors.Body.UserExists });
             }

@@ -4,5 +4,5 @@
     <div>
         {{article.Content}}
     </div>
-    <i><h5>By {{creator}}</h5></i>
+    <h5>By <a routerLink="/user/{{creator.ID}}">{{creator.Username}}</a> </h5>
 </div>

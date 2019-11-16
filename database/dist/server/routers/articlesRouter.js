@@ -196,22 +196,20 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
     }))
         .post("/create", (req, res) => __awaiter(this, void 0, void 0, function* () {
         const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
+        console.log(req.body);
         if (typeof req.body.New === "undefined") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
-            console.log("a");
             return;
         }
         else if (typeof req.body.New.Title === "undefined") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
-            console.log("b");
             return;
         }
         else if (typeof req.body.New.Content === "undefined") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
-            console.log("c");
             return;
         }
         else if (creds.success) {
@@ -223,7 +221,6 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                 .find({ ID: newId })
                 .toArray();
             if (r.length > 0) {
-                console.log(r);
                 res.status(400);
                 res.send({ Error: errors.Body.ArticleExists });
             }

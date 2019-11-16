@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DatabaseService, Article } from '../database.service';
+import { DatabaseService, Article, User } from '../database.service';
 
 @Component({
   selector: 'app-article',
@@ -8,8 +8,8 @@ import { DatabaseService, Article } from '../database.service';
   styleUrls: ['./article.component.scss']
 })
 export class ArticleComponent implements OnInit {
-  article: Article = null;
-  creator: string;
+  article: Article;
+  creator: User;
   done = false;
 
   constructor(
@@ -20,7 +20,8 @@ export class ArticleComponent implements OnInit {
   async ngOnInit() {
     const articleId = this.router.snapshot.paramMap.get('id');
 
-    this.article = (await this.db.Articles.Get.ById(articleId)[0]);
-    this.creator = (await this.db.Users.Get.ById(this.article.OwnerId)).Username;
+    this.article = (await this.db.Articles.Get.ById(articleId))[0];
+    this.creator = await this.db.Users.Get.ById(this.article.OwnerId);
+    this.done = true;
   }
 }
