@@ -36,7 +36,6 @@ exports.DefaultCredentialsChecker = (creds, db, passRegEx, errors) => __awaiter(
         .collection("users")
         .find({ ID: creds.UserId })
         .toArray();
-    console.log(creds.Password.match(passRegEx).length);
     if (users.length !== 1) {
         return Promise.resolve({ error: errors.Body.MoreOrLessThanOne.Users, success: false });
     }

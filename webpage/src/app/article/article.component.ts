@@ -19,7 +19,6 @@ export class ArticleComponent implements OnInit {
 
   async ngOnInit() {
     const articleId = this.router.snapshot.paramMap.get('id');
-    console.log(articleId);
 
     this.article = (await this.db.Articles.Get.ById(articleId)[0]);
     this.creator = (await this.db.Users.Get.ById(this.article.OwnerId)).Username;

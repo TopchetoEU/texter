@@ -19,7 +19,7 @@ export class AllUsersComponent implements OnInit, AfterViewInit {
 
     async ngOnInit() {
         this.users = await this.db.Users.Get.All();
-        this.done = false;
+        this.done = true;
     }
 
     ngAfterViewInit() {

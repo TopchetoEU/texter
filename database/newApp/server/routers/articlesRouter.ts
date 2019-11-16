@@ -182,17 +182,14 @@ export function GetArticlesRouter(
             if (typeof req.body.New === "undefined") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });
-                console.log("a");
                 return;
             } else if (typeof req.body.New.Title === "undefined") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });
-                console.log("b");
                 return;
             } else if (typeof req.body.New.Content === "undefined") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });
-                console.log("c");
                 return;
             } else if (creds.success) {
                 await db.connect();
@@ -203,7 +200,6 @@ export function GetArticlesRouter(
                     .find({ ID: newId })
                     .toArray();
                 if (r.length > 0) {
-                    console.log(r);
                     res.status(400);
                     res.send({ Error: errors.Body.ArticleExists });
                 } else {
