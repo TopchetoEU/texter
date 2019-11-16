@@ -4,6 +4,7 @@ import { MongoClient } from "mongodb";
 import sha256 from "sha256";
 import { CredentialsChecker } from "./credentialsChecker";
 import { getArticlesRouter, getUsersRouter } from "./routers/index";
+import { GetOthersRouter } from "./routers/othersRouter";
 
 export function getServer(
     credentialsChecker: CredentialsChecker,
@@ -23,6 +24,7 @@ export function getServer(
             })
             .use("/articles", getArticlesRouter(db, errors, credentialsChecker, config.PasswordRegEx))
             .use("/users", getUsersRouter(db, errors, credentialsChecker, config.PasswordRegEx))
+            .use("/others", GetOthersRouter(db, errors, credentialsChecker, config.PasswordRegEx))
             .use(express.static("static"))
             .get("/", (req, res) => {
                 res.redirect("/index.html");

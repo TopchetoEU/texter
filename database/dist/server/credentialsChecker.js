@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,46 +20,39 @@ exports.Error = Error;
 class Credentials {
 }
 exports.Credentials = Credentials;
-exports.DefaultCredentialsChecker = (creds, db, passRegEx, errors, cb) => {
+exports.DefaultCredentialsChecker = (creds, db, passRegEx, errors) => __awaiter(void 0, void 0, void 0, function* () {
     if (typeof creds === "undefined") {
-        cb(errors.Body.Missing.Credentials, false);
-        return;
+        return Promise.resolve({ error: errors.Body.Missing.Credentials, success: false });
     }
     if (typeof creds.UserId !== "number") {
-        cb(errors.Body.Missing.Credentials, false);
-        return;
+        return Promise.resolve({ error: errors.Body.Missing.Credentials, success: false });
     }
     if (typeof creds.Password !== "string") {
-        cb(errors.Body.Credentials.InvalidFormat, false);
-        return;
+        return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
     }
-    db.connect().then(() => {
-        db
-            .db("texter")
-            .collection("users")
-            .find({ ID: creds.UserId })
-            .toArray()
-            .then((users) => {
-            console.log(creds.Password.match(passRegEx).length);
-            if (users.length !== 1) {
-                cb(errors.Body.MoreOrLessThanOne.Users, false);
-            }
-            else if (typeof creds.Password !== "string") {
-                cb(errors.Body.Credentials.InvalidFormat, false);
-            }
-            else if (creds.Password.match(passRegEx).length !== 1) {
-                cb(errors.Body.Credentials.InvalidFormat, false);
-            }
-            else if (creds.Password.length < 8 || creds.Password.length > 64) {
-                cb(errors.Body.Credentials.InvalidFormat, false);
-            }
-            else if (users[0].Password !== sha256_1.default(creds.Password)) {
-                cb(errors.Body.Credentials.Wrong, false);
-            }
-            else {
-                cb(null, true);
-            }
-        });
-    });
-};
+    yield db.connect();
+    const users = yield db
+        .db("texter")
+        .collection("users")
+        .find({ ID: creds.UserId })
+        .toArray();
+    if (users.length !== 1) {
+        return Promise.resolve({ error: errors.Body.MoreOrLessThanOne.Users, success: false });
+    }
+    else if (typeof creds.Password !== "string") {
+        return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
+    }
+    else if (creds.Password.match(passRegEx).length !== 1) {
+        return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
+    }
+    else if (creds.Password.length < 8 || creds.Password.length > 64) {
+        return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
+    }
+    else if (users[0].Password !== sha256_1.default(creds.Password)) {
+        return Promise.resolve({ error: errors.Body.Credentials.Wrong, success: false });
+    }
+    else {
+        return Promise.resolve({ error: null, success: true });
+    }
+});
 //# sourceMappingURL=credentialsChecker.js.map

@@ -14,11 +14,10 @@ export class AllArticlesComponent implements OnInit {
   articles = new Array<Article>();
   done = false;
 
-  ngOnInit() {
-    this.db.Articles.Get.All((articles) => {
-      this.articles = articles;
-      this.done = true;
-    });
+  async ngOnInit() {
+    const arts = await this.db.Articles.Get.All();
+    this.articles = arts;
+    this.done = true;
   }
 
 }

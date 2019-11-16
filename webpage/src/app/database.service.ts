@@ -8,59 +8,113 @@ export class DatabaseService {
 
   public Users = {
     Get: {
-      All: (callback: (users: User[]) => void): void => {
-        HTTP.Post('http://46.249.77.12:4001/users/get', {
-          Selector: {}
-        }, (users) => {
-          callback(users.Found);
-        });
+      All: async (): Promise<User[]> => {
+        const users = await HTTP.Post('http://46.249.77.12:4001/users/get', { Selector: {} });
+        return Promise.resolve(users.Found);
       },
-      ById: (id: number, callback: (users: User[]) => void) => {
-        HTTP.Post('http://46.249.77.12:4001/users/get', {
+      ById: async (id: number): Promise<User> => {
+        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
           Selector: { ID: id },
-        }, (res) => {
-          callback(res.Found);
         });
+        if (res.Found.length === 1) {
+          return Promise.resolve(res.Found[0]);
+        } else {
+          return Promise.reject({ Error: "No user found" });
+        }
+      },
+      ByName: async (name: string): Promise<User> => {
+        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
+          Selector: { Username: name },
+        });
+        if (res.Found.length === 1) {
+          return Promise.resolve(res.Found[0]);
+        } else {
+          return Promise.reject({ Error: "User doesn't exists" });
+        }
       }
     }
   };
   public Articles = {
     Get: {
-      All: (callback: (articles: Article[]) => void): void => {
-        HTTP.Post('http://46.249.77.12:4001/articles/get', {
+      All: async (): Promise<Article[]> => {
+        const articles = await HTTP.Post('http://46.249.77.12:4001/articles/get', {
           Selector: {}
-        }, (articles) => {
-          callback(articles.Found);
         });
+        return Promise.resolve(articles.Found);
       },
-      BySelector: (selector: any, callback: (articles: Article[]) => void): void => {
-        HTTP.Post('http://46.249.77.12:4001/articles/get', {
+      BySelector: async (selector: any): Promise<Article[]> => {
+        const articles = await HTTP.Post('http://46.249.77.12:4001/articles/get', {
           Selector: selector
-        }, (articles) => {
-          callback(articles.Found);
         });
+        return Promise.resolve(articles.Found);
       },
-      ById: (id: string, callback: (articles: Article[]) => void): void => {
-        HTTP.Post('http://46.249.77.12:4001/articles/get', {
-          Selector: { ID: id   }
-        }, (articles) => {
-          callback(articles.Found);
+      ById: async (id: string): Promise<Article[]> => {
+        const articles = await HTTP.Post('http://46.249.77.12:4001/articles/get', {
+          Selector: { ID: id }
         });
+        return Promise.resolve(articles.Found);
       }
     }
   };
+  public async checkCredentials(credentials: Credentials): Promise<{ error: Error, success: boolean }> {
+    const res = await HTTP.Post('http://46.249.77.12:4001/others/checkCreds', credentials);
+    return Promise.resolve(res);
+  }
+}
+
+export interface Credentials {
+  UserId: number;
+  Password: string;
+}
+export enum Method {
+  GET,
+  POST,
+  PUT,
+  DELETE,
+}
+
+export interface Request {
+  method: Method;
+  url: string;
+  headers: Array<{ name: string, value: any }>;
+  body: any;
 }
 
 export class HTTP {
-  public static Post(url: string, body: object, callback: (res: any) => void): void {
-    const a = new XMLHttpRequest();
-    a.open('POST', url);
-    a.onreadystatechange = () => {
-      if (a.readyState === 4) {
-        callback(JSON.parse(a.response));
+  private static request = (obj: Request) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(Method[obj.method], obj.url);
+      if (obj.headers) {
+        obj.headers.forEach(header => {
+          xhr.setRequestHeader(header.name, header.value);
+        });
       }
-    };
-    a.send( JSON.stringify(body));
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          let a = xhr.response;
+          try {
+            a = JSON.parse(a);
+          } catch (b) { }
+
+          resolve(a);
+        } else {
+          reject(xhr.statusText);
+        }
+      };
+      xhr.onerror = () => reject(xhr.statusText);
+      xhr.send(JSON.stringify(obj.body));
+    });
+  }
+
+  public static Post = async (url: string, body: any): Promise<any> => {
+    const d = await HTTP.request({
+      body,
+      headers: [],
+      method: Method.POST,
+      url,
+    });
+    return Promise.resolve(d);
   }
 }
 
@@ -80,4 +134,12 @@ export class Article {
   public OwnerId: number;
   public Likers: any;
   public Articles: string[];
+}
+
+export interface Error {
+  Error: boolean;
+  ErrorDetails: {
+    General: string;
+    More: string;
+  };
 }

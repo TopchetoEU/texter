@@ -12,12 +12,11 @@ export class AppComponent {
 
   constructor(
     private gs: GlobalsService
-  ) {}
+  ) { }
   title = "texter";
 
   private visible = true;
   showProgressBar() {
-    // console.log(this.gs.loading);
     return !this.loaded;
   }
 }

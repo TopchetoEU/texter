@@ -17,18 +17,10 @@ export class ArticleComponent implements OnInit {
     private db: DatabaseService,
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     const articleId = this.router.snapshot.paramMap.get('id');
-    console.log(articleId);
 
-    this.db.Articles.Get.ById(articleId, (articles) => {
-      if (articles.length > 0) {
-        this.article = articles[0];
-        this.db.Users.Get.ById(this.article.OwnerId, (users) => {
-          this.creator = users[0].Username;
-          this.done = true;
-        });
-      }
-    });
+    this.article = (await this.db.Articles.Get.ById(articleId)[0]);
+    this.creator = (await this.db.Users.Get.ById(this.article.OwnerId)).Username;
   }
 }
