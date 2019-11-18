@@ -1,0 +1,13 @@
+button {
+    margin: 0 .25em;
+}
+
+.toolbar {
+    display: flex;
+    padding: .5em; 
+    height: auto;
+}
+.toolbarDivider {
+    display: flex;
+    flex: 1 1;
+}
