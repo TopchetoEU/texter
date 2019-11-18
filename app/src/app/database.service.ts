@@ -19,7 +19,7 @@ export class DatabaseService {
         if (res.Found.length === 1) {
           return Promise.resolve(res.Found[0]);
         } else {
-          return Promise.reject({ Error: "No user found" });
+          return Promise.reject({ Error: 'No user found' });
         }
       },
       ByName: async (name: string): Promise<User> => {
@@ -29,7 +29,7 @@ export class DatabaseService {
         if (res.Found.length === 1) {
           return Promise.resolve(res.Found[0]);
         } else {
-          return Promise.reject({ Error: "User doesn't exists" });
+          return Promise.reject({ Error: 'User doesn\'t exists' });
         }
       }
     }
