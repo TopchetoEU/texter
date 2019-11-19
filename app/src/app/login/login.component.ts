@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalsService } from '../globals.service';
-import { DatabaseService, Error } from '../database.service';
+import { DatabaseService } from '../database.service';
 import { Router } from '@angular/router';
 
 @Component({
