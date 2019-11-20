@@ -1,10 +1,14 @@
 <div class="toolbar">
-    <button igxButton igxRipple routerLink="/">Home</button>
-    <button igxButton igxRipple routerLink="/allUsers">All users</button>
-    <button igxButton igxRipple routerLink="/allArticles">All articles</button>
+    <div class="leftItems">
+        <button class="a" igxButton igxRipple routerLink="/">Home</button>
+        <button class="a" igxButton igxRipple routerLink="/allUsers">All users</button>
+        <button class="a" igxButton igxRipple routerLink="/allArticles">All articles</button>
+    </div>
     <div class="toolbarDivider"></div>
-    <button igxButton igxRipple routerLink="/logIn" style="float: right">Log in</button>
-    <button igxButton igxRipple routerLink="/signIn" style="float: right">Sign in</button>
+    <div class="rightItems">
+        <button class="a" igxButton igxRipple routerLink="/logIn">Log in</button>
+        <button class="a" igxButton igxRipple routerLink="/signIn">Sign in</button>
+    </div>
 </div>
 <div style="padding: 1em">
     <router-outlet></router-outlet>

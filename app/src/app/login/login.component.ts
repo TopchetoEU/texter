@@ -22,17 +22,18 @@ export class LoginComponent implements OnInit {
     async login(n, p) {
         try {
             const a =     await this.db.Users.Get.ByName(n);
-            const error = await this.db.checkCredentials({ Password: p, UserId: n });
+            const error = await this.db.checkCredentials({ Password: p, UserId: a.ID });
 
             if (error.success) {
                 this.globals.userId = n;
                 this.globals.password = p;
                 this.globals.loggedIn = true;
+                console.info("Successfull login");
             } else {
                 throw error.error;
             }
         } catch (err) {
-            console.error(err.error);
+            console.error(err);
         }
 
     }

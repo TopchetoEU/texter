@@ -57,7 +57,7 @@ export class DatabaseService {
     }
   };
   public async checkCredentials(credentials: Credentials): Promise<{ error: Error, success: boolean }> {
-    const res = await HTTP.Post('http://46.249.77.12:4001/others/checkCreds', credentials);
+    const res = await HTTP.Post('http://46.249.77.12:4001/others/checkCreds', { Credentials: credentials });
     return Promise.resolve(res);
   }
 }

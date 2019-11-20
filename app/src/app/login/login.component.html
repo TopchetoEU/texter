@@ -1,9 +1,20 @@
-<div style="text-align: center; width: 100%">
-    <mat-form-field style="width: 100%">
-        <input #user width="100%" matInput placeholder="Username">
-    </mat-form-field><br>
-    <mat-form-field style="width: 100%">
-        <input #pass width="100%" matInput type="password" placeholder="Password">
-    </mat-form-field><br>
-    <button style="width: 100%" mat-button (click)="login(user.value, pass.value)">Log in</button>
+<div class="container" style="display: flex; width: 100%">
+    <div class="centerer"></div>
+    <igx-card class="loginPrompt">
+        <igx-card-header>
+            <h3>Login to Texter:</h3>
+        </igx-card-header>
+        <igx-card-content style="text-align: center;">
+            <div style="margin-bottom: 10px;">
+                <igx-input-group>
+                    <input #user igxInput placeholder="Username">
+                </igx-input-group>
+                <igx-input-group>
+                    <input #pass igxInput type="password" placeholder="Password">
+                </igx-input-group>
+            </div>
+            <button igxButton igxRipple (click)="login(user.value, pass.value)">Log in</button>
+        </igx-card-content>
+    </igx-card>
+    <div class="centerer"></div>
 </div>

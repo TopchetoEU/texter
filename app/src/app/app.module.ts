@@ -17,7 +17,7 @@ import { UserComponent } from './user/user.component';
 import { ArticleComponent } from './article/article.component';
 import { LoginComponent } from './login/login.component';
 
-import { IgxButtonModule, IgxRippleModule } from 'igniteui-angular';
+import { IgxButtonModule, IgxRippleModule, IgxCardModule, IgxInputGroupModule } from 'igniteui-angular';
 
 @NgModule({
   declarations: [
@@ -42,6 +42,8 @@ import { IgxButtonModule, IgxRippleModule } from 'igniteui-angular';
 
     IgxButtonModule,
     IgxRippleModule,
+    IgxCardModule,
+    IgxInputGroupModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
