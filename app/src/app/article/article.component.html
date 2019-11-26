@@ -1,4 +1,4 @@
-<mat-progress-bar *ngIf="!done" mode="query"></mat-progress-bar>
+<igx-linear-bar *ngIf="!done" [indeterminate]="true"></igx-linear-bar>
 <div *ngIf="done">
     <h2>{{article.Title}} </h2>
     <div>

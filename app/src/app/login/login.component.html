@@ -1,6 +1,7 @@
 <div class="container" style="display: flex; width: 100%">
     <div class="centerer"></div>
     <igx-card class="loginPrompt">
+        <igx-linear-bar *ngIf="!done" [indeterminate]="true" style="position: relative; top: 0; left: 0; "></igx-linear-bar>
         <igx-card-header>
             <h3>Login to Texter:</h3>
         </igx-card-header>

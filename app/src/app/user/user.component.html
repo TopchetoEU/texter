@@ -1,4 +1,4 @@
-<mat-progress-bar *ngIf="!done" mode="query"></mat-progress-bar>
+<igx-linear-bar *ngIf="!done" [indeterminate]="true"></igx-linear-bar>
 <div *ngIf="done" style="user-select: none;">
     <h2>{{user.Username}} </h2>
     <h3>All articles:</h3>

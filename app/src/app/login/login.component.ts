@@ -16,10 +16,21 @@ export class LoginComponent implements OnInit {
         public r: Router
     ) { }
 
+    done = true;
+
     ngOnInit() {
     }
 
     async login(n, p) {
+        const err = (e) => {
+            this.done = true;
+            throw e;
+        };
+        const succ = () => {
+            this.done = true;
+            return;
+        };
+        this.done = false;
         try {
             const a =     await this.db.Users.Get.ByName(n);
             const error = await this.db.checkCredentials({ Password: p, UserId: a.ID });
@@ -28,12 +39,12 @@ export class LoginComponent implements OnInit {
                 this.globals.userId = n;
                 this.globals.password = p;
                 this.globals.loggedIn = true;
-                console.info("Successfull login");
+                succ();
             } else {
-                throw error.error;
+                err(error);
             }
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            err(e);
         }
 
     }

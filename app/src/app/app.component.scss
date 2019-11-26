@@ -22,8 +22,8 @@ button {
 
 @media only screen and (max-width: 950px) {
     .phoneMenu {
-        padding-top: .5em;
-        display: flex;
+        padding: 1em;
+        display: block;
     }
     .desktopMenu {
         display: none;

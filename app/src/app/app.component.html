@@ -9,17 +9,15 @@
             [routerLink]="item.path">{{item.name}}</button>
     </div>
 </div>
-<div class="phoneMenu">
-    <h3 class="title">Texter:</h3>
-    <button width="100px" style="float: left" igxButton="fab" igxRipple [overlaySettings]="overlaySettings" [igxToggleAction]="dropdown"
-        [igxDropDownItemNavigation]="dropdown">
+<div #phoneMenu class="phoneMenu">
+    <h3 class="title">Texter</h3>
+    <button width="100px" style="float: right" igxButton="fab" igxRipple #navButton (click)="toggle()">
         <igx-icon>
             menu
         </igx-icon>
     </button>
-    <div style="padding: 1em; display: block;">
-        <div class="toolbarDivider"></div>
-        <igx-drop-down #dropdown style="width: 100%;">
+    <div style="padding: 1em; display: inline-block;">
+        <igx-drop-down #dropdown style="width: 100%; position: absolute; left: 0;">
             <igx-drop-down-item igxRipple *ngFor="let item of leftItems" [routerLink]="item.path">
                 {{item.name}}
             </igx-drop-down-item>

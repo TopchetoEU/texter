@@ -23,10 +23,11 @@ import {
   IgxCardModule,
   IgxInputGroupModule,
   IgxDropDownModule,
-  IgxToggleActionDirective,
   IgxToggleModule,
-  IgxIconModule
+  IgxIconModule,
+  IgxProgressBarModule
 } from 'igniteui-angular';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {
     UserComponent,
     ArticleComponent,
     LoginComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,6 +58,7 @@ import {
     IgxDropDownModule,
     IgxToggleModule,
     IgxIconModule,
+    IgxProgressBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
