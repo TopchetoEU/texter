@@ -29,12 +29,12 @@ export class AppComponent implements AfterViewInit {
     private gs: GlobalsService
   ) { }
 
-  leftItems: Array<{ path: string, name: string }> = [
-    { name: 'Home', path: '/' },
-    { name: 'All users', path: '/allUsers' },
-    { name: 'All articles', path: '/allArticles' },
+  leftItems: Array<{ path: string, name: string, icon: string }> = [
+    { name: 'Home', path: '/', icon: 'home' },
+    { name: 'All users', path: '/allUsers', icon: 'search' },
+    { name: 'All articles', path: '/allArticles', icon: 'search' },
   ];
-  rightItems: Array<{ path: string, name: string }> = [
+  accountOptions: Array<{ path: string, name: string }> = [
     { name: 'Log in', path: '/logIn' },
     { name: 'Sign in', path: '/signIn' },
   ];

@@ -28,6 +28,7 @@ import {
   IgxProgressBarModule
 } from 'igniteui-angular';
 import { HomeComponent } from './home/home.component';
+import { SearchPageComponent } from './search-page/search-page.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { HomeComponent } from './home/home.component';
     ArticleComponent,
     LoginComponent,
     HomeComponent,
+    SearchPageComponent,
   ],
   imports: [
     BrowserModule,

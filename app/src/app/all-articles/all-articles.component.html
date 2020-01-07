@@ -1,4 +1,4 @@
-    1<h2>All articles:</h2>
+<h2>All articles:</h2>
 <igx-linear-bar *ngIf="!done" [indeterminate]="true"></igx-linear-bar>
 <mat-action-list role="list">
     <mat-list-item *ngFor="let article of articles" role="list-item" style="user-select: none;" routerLink="/article/{{article.ID}}">{{article.Title}}</mat-list-item>

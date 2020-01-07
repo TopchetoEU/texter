@@ -12,6 +12,16 @@ export class DatabaseService {
         const users = await HTTP.Post('http://46.249.77.12:4001/users/get', { Selector: {} });
         return Promise.resolve(users.Found);
       },
+      BySelector: async (selector): Promise<User[]> => {
+        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
+          Selector: selector,
+        });
+        if (res.Found.length === 1) {
+          return Promise.resolve(res.Found[0]);
+        } else {
+          return Promise.reject({ Error: 'No user found' });
+        }
+      },
       ById: async (id: number): Promise<User> => {
         const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
           Selector: { ID: id },

@@ -18,6 +18,5 @@ export class AllArticlesComponent implements OnInit {
     const arts = await this.db.Articles.Get.All();
     this.articles = arts;
     this.done = true;
-  }
-
+    }
 }
