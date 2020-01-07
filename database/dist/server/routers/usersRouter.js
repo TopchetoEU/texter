@@ -36,7 +36,6 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
             });
         }
         else {
-            yield db.connect();
             let a = db
                 .db("texter")
                 .collection("users")
@@ -236,7 +235,6 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
             return;
         }
         else {
-            yield db.connect();
             const newId = yield getNextFreeId();
             const r = yield db
                 .db("texter")

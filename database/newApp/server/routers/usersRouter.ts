@@ -28,7 +28,6 @@ export function GetUsersRouter(
                     Error: errors.Body.Missing.Selector,
                 });
             } else {
-                await db.connect();
                 let a = db
                     .db("texter")
                     .collection("users")
@@ -237,7 +236,6 @@ export function GetUsersRouter(
                 res.send({ Error: errors.Body.MissingAny });
                 return;
             } else {
-                await db.connect();
                 const newId = await getNextFreeId();
                 const r = await db
                     .db("texter")

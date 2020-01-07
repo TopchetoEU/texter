@@ -6,11 +6,12 @@ import { CredentialsChecker } from "./credentialsChecker";
 import { getArticlesRouter, getUsersRouter } from "./routers/index";
 import { GetOthersRouter } from "./routers/othersRouter";
 
-export function getServer(
+export async function getServer(
     credentialsChecker: CredentialsChecker,
     errors: any,
     db: MongoClient,
     config: any) {
+        await db.connect();
         return express()
             .use((req, res, next) => {
                 res.header("Access-Control-Allow-Origin", "*");

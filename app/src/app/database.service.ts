@@ -16,11 +16,8 @@ export class DatabaseService {
         const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
           Selector: selector,
         });
-        if (res.Found.length === 1) {
-          return Promise.resolve(res.Found[0]);
-        } else {
-          return Promise.reject({ Error: 'No user found' });
-        }
+        console.log(res);
+        return Promise.resolve(res.Found);
       },
       ById: async (id: number): Promise<User> => {
         const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
@@ -70,28 +67,83 @@ export class DatabaseService {
     const res = await HTTP.Post('http://46.249.77.12:4001/others/checkCreds', { Credentials: credentials });
     return Promise.resolve(res);
   }
+
+  public async searchAll(value: string): Promise<{ Users: User[], Articles: Article[] }> {
+    const regex = '(' + value.split(/[, ]/g).join(')(') + ')';
+
+    const users: User[] = await this.Users.Get.BySelector({
+      DoPaging: true,
+      Paging: {
+        PageSize: 20,
+        PageCount: 0,
+      },
+      Selector: {
+        Username: { $regex: regex }
+      }
+    });
+    const articles: Article[] = await this.Articles.Get.BySelector({
+      DoPaging: true,
+      Paging: {
+        PageSize: 20,
+        PageCount: 0,
+      },
+      Selector: {
+        Title: { $regex: regex }
+      }
+    });
+
+    return Promise.resolve({ Users: users, Articles: articles });
+  }
 }
 
 export interface Credentials {
   UserId: number;
   Password: string;
 }
+
+export class User {
+  public ID: number;
+  public Username: string;
+  public Password: string;
+  public Followers: number[];
+  public Following: number[];
+  public Articles: string[];
+}
+export class Article {
+  public ID: number;
+  public Title: string;
+  public Content: string;
+  public OwnerId: number;
+  public Likers: any;
+  public Articles: string[];
+}
+export interface Error {
+  Error: boolean;
+  ErrorDetails: {
+    General: string;
+    More: string;
+  };
+}
+
 export enum Method {
   GET,
+  HEAD,
   POST,
   PUT,
   DELETE,
+  CONNECT,
+  OPTIONS,
+  TRACE,
+  PATCH
 }
-
 export interface Request {
   method: Method;
   url: string;
   headers: Array<{ name: string, value: any }>;
   body: any;
 }
-
 export class HTTP {
-  private static request = (obj: Request) => {
+  private static request = (obj: Request): Promise<any> => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(Method[obj.method], obj.url);
@@ -117,39 +169,14 @@ export class HTTP {
     });
   }
 
-  public static Post = async (url: string, body: any): Promise<any> => {
+  public static async Post(url: string, body: any): Promise<any> {
     const d = await HTTP.request({
       body,
       headers: [],
       method: Method.POST,
       url,
     });
+
     return Promise.resolve(d);
   }
-}
-
-export class User {
-  public ID: number;
-  public Username: string;
-  public Password: string;
-  public Followers: number[];
-  public Following: number[];
-  public Articles: string[];
-}
-
-export class Article {
-  public ID: number;
-  public Title: string;
-  public Content: string;
-  public OwnerId: number;
-  public Likers: any;
-  public Articles: string[];
-}
-
-export interface Error {
-  Error: boolean;
-  ErrorDetails: {
-    General: string;
-    More: string;
-  };
 }

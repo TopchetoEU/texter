@@ -36,7 +36,6 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
             });
         }
         else {
-            yield db.connect();
             let a = db
                 .db("texter")
                 .collection("articles")
@@ -77,7 +76,6 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
             const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
             if (creds.success) {
                 if (req.body.Like === -1 || req.body.Like === 1) {
-                    yield db.connect();
                     const article = yield db
                         .db("texter")
                         .collection("articles")
@@ -213,7 +211,6 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
             return;
         }
         else if (creds.success) {
-            yield db.connect();
             const newId = sha256_1.default(req.body.New.Title);
             const r = yield db
                 .db("texter")

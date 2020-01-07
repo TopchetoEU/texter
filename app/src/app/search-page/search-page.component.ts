@@ -1,35 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { User, DatabaseService, Article } from '../database.service';
+import { fromEvent, Subject } from 'rxjs';
+import { throttleTime, takeUntil, distinct } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search-page',
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss']
 })
-export class SearchPageComponent implements OnInit {
+export class SearchPageComponent implements OnInit, OnDestroy {
+  @ViewChild('in', { static: true })
+  public searchInput: ElementRef;
+  foundUsers: User[] = [];
+  destruction: Subject<void> = new Subject();
 
   constructor(
     private db: DatabaseService
   ) { }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    this.destruction.next();
+    this.destruction.complete();
   }
 
-  async search(value: string): { Users: User[], Articles: Article[] } {
-    const searchKeywords = value.split(/[, ]/g);
-    let regex = '';
-    searchKeywords.forEach(keyword => {
-      regex += `(${keyword})`;
-    });
-    const users: User[] = await this.db.Users.Get.BySelector({
-      DoPaging: true,
-      Paging: {
-        PageSize: 20,
-        PageCount: 0,
-      },
-      Selector: {
-        Username: { $regEx: regex }
-      }
-    });
+  ngOnInit() {
+    const el = (this.searchInput.nativeElement as HTMLInputElement);
+    const a = fromEvent(el, 'keydown')
+      .pipe(throttleTime(200),
+      distinct(() => el.value),
+      takeUntil(this.destruction))
+      .subscribe(async () => {
+        this.foundUsers = await (await this.db.searchAll(el.value)).Users;
+      });
+
   }
 }

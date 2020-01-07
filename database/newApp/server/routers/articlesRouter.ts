@@ -27,7 +27,6 @@ export function GetArticlesRouter(
                     Error: errors.Body.InvalidType.Selector,
                 });
             } else {
-                await db.connect();
                 let a = db
                     .db("texter")
                     .collection("articles")
@@ -66,7 +65,6 @@ export function GetArticlesRouter(
                 const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
                 if (creds.success) {
                     if (req.body.Like === -1 || req.body.Like === 1) {
-                        await db.connect();
                         const article = await db
                             .db("texter")
                             .collection("articles")
@@ -193,7 +191,6 @@ export function GetArticlesRouter(
                 res.send({ Error: errors.Body.MissingAny });
                 return;
             } else if (creds.success) {
-                await db.connect();
                 const newId = sha256(req.body.New.Title);
                 const r = await db
                     .db("texter")

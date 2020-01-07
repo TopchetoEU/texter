@@ -34,7 +34,6 @@ export const DefaultCredentialsChecker = async (
     if (typeof creds.Password !== "string") {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
     }
-    await db.connect();
     const users = await db
         .db("texter")
         .collection("users")

@@ -30,7 +30,6 @@ exports.DefaultCredentialsChecker = (creds, db, passRegEx, errors) => __awaiter(
     if (typeof creds.Password !== "string") {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
     }
-    yield db.connect();
     const users = yield db
         .db("texter")
         .collection("users")
