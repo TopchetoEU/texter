@@ -1,34 +1,17 @@
-<div class="desktopMenu">
-    <div>
-        <button *ngFor="let item of leftItems" class="a" igxButton igxRipple
-            [routerLink]="item.path">{{item.name}}</button>
+<div #menu class="menu phone">
+    <div class="items">
+        <button igxButton="icon" class="button" igxRipple *ngFor="let item of leftItems" [routerLink]="item.path">
+            <igx-icon>{{item.icon}}</igx-icon>
+        </button>
     </div>
-    <div class="toolbarDivider"></div>
-    <div>
-        <button *ngFor="let item of rightItems" class="a" igxButton igxRipple
-            [routerLink]="item.path">{{item.name}}</button>
-    </div>
-</div>
-<div class="cover">
-    <div class="bottom">
-        <div #phoneMenu class="phoneMenu phoneVisible">
-            <button width="100px" style="float: right" igxButton="fab" igxRipple #navButton (click)="toggle()">
-                <igx-icon>
-                    menu
-                </igx-icon>
-            </button>
-            <div style="padding: 1em; display: inline-block;">
-                    <div igxRipple *ngFor="let item of leftItems" [routerLink]="item.path">
-                        {{item.name}}
-                        <igx-icon>{{item.icon}}</igx-icon>
-                    </div>
-                    <button width="100px" igxButton="fab" igxRipple *ngFor="let item of accountOptions" [routerLink]="item.path">
-                        {{item.name}}
-                    </button>
-            </div> 
-        </div>
+    <div class="bar">
+        <igx-input-group type="search" class="searchBar">
+            <input igxInput type="text" name="search">
+            <label igxLabel for="search">Start typing username or article title</label>
+        </igx-input-group>
     </div>
 </div>
-<div style="padding: 1em">
+
+<div class="content">
     <router-outlet></router-outlet>
 </div>

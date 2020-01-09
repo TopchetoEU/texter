@@ -16,15 +16,6 @@ import {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('phoneMenu', { static: true })
-  private phoneMenu: ElementRef;
-
-  @ViewChild('navButton', { static: true })
-  private navButton: ElementRef;
-
-  @ViewChild('dropdown', { static: true })
-  private dropdown: IgxDropDownComponent;
-
   constructor(
     private gs: GlobalsService
   ) { }
@@ -39,26 +30,6 @@ export class AppComponent implements AfterViewInit {
     { name: 'Sign in', path: '/signIn' },
   ];
 
-  public overlaySettings = {
-    positionStrategy: new ConnectedPositioningStrategy({
-      horizontalDirection: HorizontalAlignment.Center,
-      verticalDirection: VerticalAlignment.Bottom,
-    }),
-    scrollStrategy: new NoOpScrollStrategy()
-  };
-
-  menuCollapsed(): boolean {
-    console.log(window.innerWidth < 950);
-    return window.innerWidth < 950;
-  }
-
-  toggle() {
-    this.dropdown.toggle(this.overlaySettings);
-  }
   ngAfterViewInit(): void {
-    const x = this.phoneMenu.nativeElement.getBoundingClientRect().width / 2;
-    const y = this.navButton.nativeElement.getBoundingClientRect().bottom + 5;
-
-    this.overlaySettings.positionStrategy.settings.target = new Point(x, y);
   }
 }

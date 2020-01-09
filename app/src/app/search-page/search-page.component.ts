@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { User, DatabaseService, Article } from '../database.service';
 import { fromEvent, Subject } from 'rxjs';
-import { throttleTime, takeUntil, distinct } from 'rxjs/operators';
+import { throttleTime, takeUntil, distinct, delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search-page',
@@ -28,7 +28,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const a = fromEvent(el, 'keydown')
       .pipe(throttleTime(200),
       distinct(() => el.value),
-      takeUntil(this.destruction))
+      takeUntil(this.destruction),
+      delay(500))
       .subscribe(async () => {
         this.foundUsers = await (await this.db.searchAll(el.value)).Users;
       });

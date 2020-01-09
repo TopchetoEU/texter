@@ -13,10 +13,7 @@ export class DatabaseService {
         return Promise.resolve(users.Found);
       },
       BySelector: async (selector): Promise<User[]> => {
-        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
-          Selector: selector,
-        });
-        console.log(res);
+        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', selector);
         return Promise.resolve(res.Found);
       },
       ById: async (id: number): Promise<User> => {

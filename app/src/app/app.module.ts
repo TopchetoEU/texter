@@ -25,7 +25,7 @@ import {
   IgxDropDownModule,
   IgxToggleModule,
   IgxIconModule,
-  IgxProgressBarModule
+  IgxProgressBarModule,
 } from 'igniteui-angular';
 import { HomeComponent } from './home/home.component';
 import { SearchPageComponent } from './search-page/search-page.component';
