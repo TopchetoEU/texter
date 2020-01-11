@@ -2,11 +2,74 @@ button {
     margin: 0 0.25em;
 }
 
+.label {
+    padding: 0 20px;
+}
+
+.person {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100px;
+    background-color: #555;
+    color: #fff;
+    margin-right: 25px;
+    overflow: hidden;
+    width: 30px;
+    height: 30px;
+}
+
 .phone {
     display: none;
 }
 .desktop {
     display: unset;
+}
+
+.account {
+    user-select: none;
+    cursor: pointer;
+}
+
+.menu {
+    position: fixed;
+    width: 100%;
+    background-color: #fff;
+    overflow: hidden;
+
+    .bar {
+        display: flex;
+        align-items: center;
+
+        .account {
+            flex: 0 1 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            line-height: unset;
+            margin-left: 40px;
+            position: relative;
+            user-select: none;
+            overflow: hidden;
+            border-radius: 100px;
+            background: #dde0dd;
+            &:focus {
+                outline: 0;
+            }
+        }
+            
+        * {
+            flex: 1 1 auto;
+        }
+    }
+}
+.searchResults {
+    position: fixed;
+    height:  300px;
+    box-shadow: 0 0 10px #aaa;
+    background-color: #fff;
 }
 
 @media only screen and (max-width: 800px) {
@@ -19,12 +82,13 @@ button {
 
     .content {
         padding: 10px;
+        padding-top: 100px;
     }
 
     .menu {
-        position: fixed;
+        box-shadow: 0 10px 20px #000000;
         bottom: 0;
-        width: 100%;
+
         .items {
             display: flex;
             width: 100%;
@@ -32,8 +96,11 @@ button {
             justify-content: space-around;
             align-items: stretch;
             line-height: unset;
+            background-color: #fff;
+            position: relative;
 
             button {
+                background-color: transparent;
                 min-width: unset;
                 min-height: unset;
                 width: 50px;
@@ -41,9 +108,10 @@ button {
                 padding: 0;
                 display: flex;
                 align-items: center;
-                flex: 1 1 1;
                 border-radius: 10px;
                 background-color: transparent;
+                overflow: visible;
+                position: relative;
             }
         }
 
@@ -51,27 +119,32 @@ button {
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 5px;
+            padding: 10px 40px;
+            background-color: #fff;
+            box-shadow: 0 -10px 20px #000000;
         }
     }
 }
 
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 801px) {
     .content {
         padding: 10px;
-        padding-top: 50px;
+        padding-top: 100px;
     }
 
     .menu {
-        position: fixed;
         top: 0;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 -10px 20px #000;
+        display: flex;
+        align-items: center;
+
         .items {
-            padding: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 -12.5px 25px #555;
-            width: 100%;
-            background-color: #fff;
-            width: 100%;
+            display: inline-block;
+        }
+        .bar {
+            flex: 1 1 auto;
         }
     }
 }

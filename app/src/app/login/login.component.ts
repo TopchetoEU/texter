@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
     }
 
-    async login(n, p) {
+    async login(name, password) {
         const err = (e) => {
             this.done = true;
             throw e;
@@ -32,12 +32,12 @@ export class LoginComponent implements OnInit {
         };
         this.done = false;
         try {
-            const a =     await this.db.Users.Get.ByName(n);
-            const error = await this.db.checkCredentials({ Password: p, UserId: a.ID });
+            const user =  await this.db.Users.Get.ByName(name);
+            const error = await this.db.checkCredentials({ Password: password, UserId: user.ID });
 
             if (error.success) {
-                this.globals.userId = n;
-                this.globals.password = p;
+                this.globals.userId = user.ID;
+                this.globals.password = password;
                 this.globals.loggedIn = true;
                 succ();
             } else {

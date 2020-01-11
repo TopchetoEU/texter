@@ -26,9 +26,11 @@ import {
   IgxToggleModule,
   IgxIconModule,
   IgxProgressBarModule,
+  IgxAutocompleteModule
 } from 'igniteui-angular';
 import { HomeComponent } from './home/home.component';
 import { SearchPageComponent } from './search-page/search-page.component';
+import { UserPipe } from './username.pipe';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
     LoginComponent,
     HomeComponent,
     SearchPageComponent,
+    UserPipe,
   ],
   imports: [
     BrowserModule,
@@ -61,6 +64,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
     IgxToggleModule,
     IgxIconModule,
     IgxProgressBarModule,
+    IgxAutocompleteModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
