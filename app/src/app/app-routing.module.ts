@@ -1,21 +1,17 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { AllUsersComponent } from "./all-users/all-users.component";
-import { AllArticlesComponent } from './all-articles/all-articles.component';
-import { UserComponent } from './user/user.component';
-import { ArticleComponent } from './article/article.component';
-import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
-import { SearchPageComponent } from './search-page/search-page.component';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { UserPageComponent } from './user-page/user-page.component';
+import { ArticlePageComponent } from './article-page/article-page.component';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { HomePageComponent } from './home-page/home-page.component';
+import { SigninPageComponent } from './signin-page/signin-page.component';
 
 const routes: Routes = [
-  { path: 'allUsers', component: AllUsersComponent },
-  { path: 'allArticles', component: AllArticlesComponent },
-  { path: 'user/:id', component: UserComponent },
-  { path: 'article/:id', component: ArticleComponent },
-  { path: 'logIn', component: LoginComponent },
-  { path: 'search', component: SearchPageComponent },
-  { path: '', component: HomeComponent }
+  { path: 'user/:id', component: UserPageComponent },
+  { path: 'article/:id', component: ArticlePageComponent },
+  { path: 'logIn', component: LoginPageComponent },
+  { path: 'signin', component: SigninPageComponent },
+  { path: '', component: HomePageComponent }
 ];
 
 @NgModule({

@@ -1,0 +1,25 @@
+<div class="container" style="display: flex; width: 100%">
+    <div class="centerer"></div>
+    <igx-card class="loginPrompt">
+        <igx-linear-bar *ngIf="!done" [indeterminate]="true" style="position: relative; top: 0; left: 0; "></igx-linear-bar>
+        <igx-card-header>
+            <h3>Become a part of Texter!</h3>
+            <h2>Sign in!</h2>
+        </igx-card-header>
+        <igx-card-content style="text-align: center;">
+            <div style="margin-bottom: 10px;">
+                <igx-input-group>
+                    <input #user igxInput placeholder="Username">
+                </igx-input-group>
+                <igx-input-group>
+                    <input #pass igxInput type="password" placeholder="Password">
+                </igx-input-group>
+                <igx-input-group>
+                    <input #pass2 igxInput type="password" placeholder="Repeat Password">
+                </igx-input-group>
+            </div>
+            <button igxButton igxRipple (click)="signin(user.value, pass.value, pass2.value)">Sign in</button>
+        </igx-card-content>
+    </igx-card>
+    <div class="centerer"></div>
+</div>

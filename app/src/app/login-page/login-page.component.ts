@@ -4,11 +4,11 @@ import { DatabaseService } from '../database.service';
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+    selector: 'app-login-page',
+    templateUrl: './login-page.component.html',
+    styleUrls: ['./login-page.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginPageComponent implements OnInit {
 
     constructor(
         private globals: GlobalsService,
@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
         };
         const succ = () => {
             this.done = true;
+            this.r.navigate(['/']);
             return;
         };
         this.done = false;

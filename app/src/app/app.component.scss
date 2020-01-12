@@ -71,6 +71,63 @@ button {
     box-shadow: 0 0 10px #aaa;
     background-color: #fff;
 }
+.messages {
+    position: fixed;
+    top: 200px;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    .message {
+        opacity: .5;
+        display: block;
+        max-width: 300px;
+        padding: 5px 10px;
+        transition: .1s;
+
+        .titleBar {
+            display: flex;
+            align-items: center;
+            .title {
+                flex: 1 1 auto;
+                font-weight: 900;
+            }
+            .close::before {
+                content: 'x';
+                position: relative;
+                top: -8px;
+            }
+            .close {
+                float: right;
+                justify-content: center;
+                background-color: #e64022;
+                border: 1px solid #4a2321;
+                border-radius: 100%;
+                width: 15px;
+                height: 15px;
+                display: flex;
+            }
+        }
+
+        .content {
+            padding: 0;
+            text-align: left;
+        }
+    }
+    .message:hover {
+        opacity: .8;
+    }
+
+    .error {
+        background-color: #d6786d;
+        border: 1px solid #4a2321;
+    }
+
+    .success {
+        background-color: #a3d66d;
+        border: 1px solid #536b39;
+    }
+}
 
 @media only screen and (max-width: 800px) {
     .phone {
@@ -99,7 +156,7 @@ button {
             background-color: #fff;
             position: relative;
 
-            button {
+            .button {
                 background-color: transparent;
                 min-width: unset;
                 min-height: unset;

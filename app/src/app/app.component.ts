@@ -64,9 +64,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   updateSearchView(anchoredElement: HTMLElement, anchorElement: HTMLElement) {
+    if (anchoredElement.)
     const rect = anchorElement.getBoundingClientRect();
-
-    console.log(rect);
 
     const x = rect.left - window.scrollX;
     const y = rect.bottom;

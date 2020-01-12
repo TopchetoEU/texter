@@ -4,10 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss']
+  templateUrl: './user-page.component.html',
+  styleUrls: ['./user-page.component.scss']
 })
-export class UserComponent implements OnInit {
+export class UserPageComponent implements OnInit {
   user: User = null;
   articles: Article[] = [];
   done = false;

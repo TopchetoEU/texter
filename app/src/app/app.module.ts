@@ -11,11 +11,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { AllUsersComponent } from './all-users/all-users.component';
-import { AllArticlesComponent } from './all-articles/all-articles.component';
-import { UserComponent } from './user/user.component';
-import { ArticleComponent } from './article/article.component';
-import { LoginComponent } from './login/login.component';
+import { UserPageComponent } from './user-page/user-page.component';
+import { ArticlePageComponent } from './article-page/article-page.component';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 import {
   IgxButtonModule,
@@ -28,21 +27,16 @@ import {
   IgxProgressBarModule,
   IgxAutocompleteModule
 } from 'igniteui-angular';
-import { HomeComponent } from './home/home.component';
-import { SearchPageComponent } from './search-page/search-page.component';
-import { UserPipe } from './username.pipe';
+import { SigninPageComponent } from './signin-page/signin-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AllUsersComponent,
-    AllArticlesComponent,
-    UserComponent,
-    ArticleComponent,
-    LoginComponent,
-    HomeComponent,
-    SearchPageComponent,
-    UserPipe,
+    UserPageComponent,
+    ArticlePageComponent,
+    LoginPageComponent,
+    HomePageComponent,
+    SigninPageComponent
   ],
   imports: [
     BrowserModule,

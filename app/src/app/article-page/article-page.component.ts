@@ -4,10 +4,10 @@ import { DatabaseService, Article, User } from '../database.service';
 
 @Component({
   selector: 'app-article',
-  templateUrl: './article.component.html',
-  styleUrls: ['./article.component.scss']
+  templateUrl: './article-page.component.html',
+  styleUrls: ['./article-page.component.scss']
 })
-export class ArticleComponent implements OnInit {
+export class ArticlePageComponent implements OnInit {
   article: Article;
   creator: User;
   done = false;

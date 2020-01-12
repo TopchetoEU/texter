@@ -32,10 +32,18 @@ export class DatabaseService {
         });
         if (res.Found.length === 1) {
           return Promise.resolve(res.Found[0]);
-        } else {
+        } else if (res.Found.length < 1) {
           return Promise.reject({ Error: 'User doesn\'t exists' });
+        } else if (res.Found.length > 1) {
+          return Promise.reject({ Error: 'The db\'s feeling a bit meshed up' });
         }
       }
+    },
+    Create: async (newUser: { Username: string, Password: string }): Promise<number> => {
+      const articles = await HTTP.Post('http://46.249.77.12:4001/users/create', {
+        New: newUser
+      });
+      return Promise.resolve(articles.NewId);
     }
   };
   public Articles = {

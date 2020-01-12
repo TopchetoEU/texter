@@ -1,1 +1,0 @@
-import { UserPipe } from './username.pipe';

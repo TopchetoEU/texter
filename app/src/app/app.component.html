@@ -13,6 +13,9 @@
             <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
             <span class="desktop">Login</span>
         </button>
+        <button igxButton="raised" igxRipple [routerLink]="'/signin'">
+            Sign in
+        </button>
     </div>
     <div class="bar">
         <div class="searchBar">
@@ -26,3 +29,13 @@
 </div>
 
 <div class="searchResults" #results></div>
+
+<div class="messages">
+    <div class="message success">
+        <div class="titleBar">
+            <div class="title">Title</div>
+            <div class="close"></div>
+        </div>
+        <div class="content">Some long long long long long long long long long long content</div>
+    </div>
+</div>
