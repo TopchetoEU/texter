@@ -1,10 +1,9 @@
-<div class="container" style="display: flex; width: 100%">
-    <div class="centerer"></div>
+<div class="container" style="display: flex; width: 100%; justify-content: center;">
     <igx-card class="loginPrompt">
         <igx-linear-bar *ngIf="!done" [indeterminate]="true" style="position: relative; top: 0; left: 0; "></igx-linear-bar>
         <igx-card-header>
-            <h3>Become a part of Texter!</h3>
-            <h2>Sign in!</h2>
+            <h2 style="width: 100%; text-align: center">Become a part of Texter!</h2>
+            <h3 style="width: 100%; text-align: center">Sign in!</h3>
         </igx-card-header>
         <igx-card-content style="text-align: center;">
             <div style="margin-bottom: 10px;">
@@ -19,7 +18,8 @@
                 </igx-input-group>
             </div>
             <button igxButton igxRipple (click)="signin(user.value, pass.value, pass2.value)">Sign in</button>
+            <div></div>
+            Already have an account? <a routerLink="/logIn">Log in</a> now!
         </igx-card-content>
     </igx-card>
-    <div class="centerer"></div>
 </div>

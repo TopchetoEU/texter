@@ -9,11 +9,11 @@
             <igx-icon class="phone" style="font-size: 20px;">{{item.icon}}</igx-icon>
             <span class="desktop">{{item.name}}</span>
         </button>
-        <button igxButton class="button" igxRipple [igxRippleCentered]="true" [routerLink]="'/logIn'">
+        <button *ngIf="!gs.loggedIn" igxButton class="button" igxRipple [igxRippleCentered]="true" [routerLink]="'/logIn'">
             <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
             <span class="desktop">Login</span>
         </button>
-        <button igxButton="raised" igxRipple [routerLink]="'/signin'">
+        <button *ngIf="!gs.loggedIn" igxButton="raised" igxRipple [routerLink]="'/signin'">
             Sign in
         </button>
     </div>
@@ -28,7 +28,11 @@
     </div>
 </div>
 
-<div class="searchResults" #results></div>
+<div class="searchResults" #results>
+    <div class="element" *ngFor="let user of foundUsers" igxRipple [routerLink]="'user/' + user.ID" (click)="clearSearchElement(search)">
+        {{user.Username}}
+    </div>
+</div>
 
 <div class="messages">
     <div class="message success">

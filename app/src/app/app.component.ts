@@ -18,6 +18,8 @@ export class AppComponent implements AfterViewInit {
   foundUsers: User[] = [];
   foundArticles: Article[] = [];
 
+  resultsOnFocus = false;
+
   styleInterval: Observable<number> = interval(50);
 
   constructor(
@@ -47,32 +49,45 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const el = (this.searchInput.nativeElement as HTMLInputElement);
-    const a = fromEvent(el, 'input')
-      .pipe(
-        throttleTime(300)
-      )
-      .subscribe(async () => {
-        console.log(el.value);
-        const s = await this.db.searchAll(el.value);
-        this.foundUsers = s.Users;
-        this.foundArticles = s.Articles;
-      });
+    fromEvent(el, 'input')
+      .subscribe(async () => { this.updateSearchElements(el) });
 
     this.styleInterval.subscribe(() => {
       this.updateSearchView(this.results.nativeElement as HTMLElement, this.searchInput.nativeElement as HTMLElement);
     });
   }
 
+  async updateSearchElements(el: HTMLInputElement) {
+    if (el.value.split(' ').join('').length > 0) {
+      const s = await this.db.searchAll(el.value);
+      this.foundUsers = s.Users;
+      this.foundArticles = s.Articles;
+    } else {
+      this.foundUsers = [];
+      this.foundArticles = [];
+    }
+  }
+
+  clearSearchElement(el: HTMLInputElement) {
+    el.value = '';
+    this.foundUsers = [];
+    this.foundArticles = [];
+  }
+
   updateSearchView(anchoredElement: HTMLElement, anchorElement: HTMLElement) {
-    if (anchoredElement.)
-    const rect = anchorElement.getBoundingClientRect();
+    if (this.foundUsers.length > 0 || this.foundArticles.length > 0) {
+      const rect = anchorElement.getBoundingClientRect();
 
-    const x = rect.left - window.scrollX;
-    const y = rect.bottom;
-    const width = document.body.getBoundingClientRect().width;
+      const x = rect.left - window.scrollX;
+      const y = rect.bottom;
+      const width = anchorElement.getBoundingClientRect().width;
 
-    anchoredElement.style.top = y + 'px';
-    anchoredElement.style.left = x + 'px';
-    anchoredElement.style.width = width + 'px';
+      anchoredElement.style.top = y + 'px';
+      anchoredElement.style.left = x + 'px';
+      anchoredElement.style.width = width + 'px';
+      anchoredElement.style.display = '';
+    } else {
+      anchoredElement.style.display = 'none';
+    }
   }
 }

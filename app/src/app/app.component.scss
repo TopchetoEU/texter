@@ -67,13 +67,27 @@ button {
 }
 .searchResults {
     position: fixed;
-    height:  300px;
+    min-height:  10px;
     box-shadow: 0 0 10px #aaa;
     background-color: #fff;
+    transition: 2s;
+    overflow: hidden;
+    .element {
+        padding: 5px 20px;
+        transition: .1s;
+        user-select: none;
+        cursor: pointer;
+        overflow: hidden;
+        outline: none;
+        position: relative;
+        &:active {
+            background-color: #ddd;
+        }
+    }
 }
 .messages {
     position: fixed;
-    top: 200px;
+    top: 75px;
     right: 0;
     display: flex;
     flex-direction: column;
@@ -93,9 +107,11 @@ button {
                 font-weight: 900;
             }
             .close::before {
+                transition: .1s;
                 content: 'x';
                 position: relative;
-                top: -8px;
+                top: -1px;
+                font-size: 20px;
             }
             .close {
                 float: right;
@@ -103,9 +119,13 @@ button {
                 background-color: #e64022;
                 border: 1px solid #4a2321;
                 border-radius: 100%;
-                width: 15px;
-                height: 15px;
+                width: 30px;
+                height: 30px;
                 display: flex;
+
+                &:active {
+                    background-color: #801f19;
+                }
             }
         }
 
@@ -140,6 +160,7 @@ button {
     .content {
         padding: 10px;
         padding-top: 100px;
+        padding-bottom: 100px;
     }
 
     .menu {
