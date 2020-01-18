@@ -1,15 +1,64 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Article, DatabaseService, Error, Like } from '../database.service';
+import { GlobalsService } from '../globals.service';
+import { NotificationType, Notification, NotificationsService } from '../notifications.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss']
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent implements OnInit, OnDestroy {
+  articles: Article[] = [];
+  index = 0;
+  articlesEnded = false;
+  intervalId;
 
-  constructor() { }
+  constructor(
+    public db: DatabaseService,
+    private globals: GlobalsService,
+    private notifs: NotificationsService
+  ) { }
 
   ngOnInit() {
+    window.scrollTo(0, 0);
+    this.intervalId = setInterval(() => {
+      this.loadNewContent();
+    }, 100);
   }
 
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+  }
+
+  loadNewContent() {
+    if (!this.articlesEnded && this.contentLoadRequired()) {
+      this.db.Articles.Get.BySelector({}, {
+        DoPaging: true,
+        Paging: {
+          PageSize: 20,
+          PageCount: this.index,
+        }
+      }).then((articles) => {
+        if (articles.length > 0) {
+          articles.forEach(v => {
+            this.articles.push(v);
+          });
+
+          this.index++;
+        } else {
+          this.articlesEnded = true;
+        }
+      });
+    }
+  }
+
+  contentLoadRequired(): boolean {
+    const windowHeight = window.innerHeight;
+    const bodyHeight = document.body.getBoundingClientRect().height;
+    const scroll = window.scrollY;
+    //const scrollLevel = (scroll) / (bodyHeight - windowHeight);
+
+    return scroll > bodyHeight - 2 * windowHeight;
+  }
 }

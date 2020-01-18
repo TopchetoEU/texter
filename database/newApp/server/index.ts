@@ -1,7 +1,7 @@
 import { json } from "body-parser";
 import express from "express";
 import { MongoClient } from "mongodb";
-import sha256 from "sha256";
+import { ConfigType } from "../config";
 import { CredentialsChecker } from "./credentialsChecker";
 import { getArticlesRouter, getUsersRouter } from "./routers/index";
 import { GetOthersRouter } from "./routers/othersRouter";
@@ -10,7 +10,7 @@ export async function getServer(
     credentialsChecker: CredentialsChecker,
     errors: any,
     db: MongoClient,
-    config: any) {
+    config: ConfigType) {
         await db.connect();
         return express()
             .use((req, res, next) => {

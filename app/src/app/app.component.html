@@ -13,8 +13,10 @@
             <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
             <span class="desktop">Login</span>
         </button>
-        <button *ngIf="!gs.loggedIn" igxButton="raised" igxRipple [routerLink]="'/signin'">
-            Sign in
+        <button *ngIf="!gs.loggedIn" igxButton="fab" class="signinButton" igxRipple [routerLink]="'/signin'">
+            <igx-icon class="phone" style="font-size: 20px;">person_add</igx-icon>
+            <span class="desktop">Sign in</span>
+            
         </button>
     </div>
     <div class="bar">
@@ -35,11 +37,11 @@
 </div>
 
 <div class="messages">
-    <div class="message success">
+    <div [ngClass]="['message', getNotificationName(not.type).toLowerCase()]" *ngFor="let not of notifs.notifications" #notif>
         <div class="titleBar">
-            <div class="title">Title</div>
-            <div class="close"></div>
+            <div class="title">{{not.title}}</div>
+            <div class="close" igxRipple (click)="destroyNotificaton(not, notif)"></div>
         </div>
-        <div class="content">Some long long long long long long long long long long content</div>
+        <div class="content">{{not.content}}</div>
     </div>
 </div>

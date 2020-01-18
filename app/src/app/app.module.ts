@@ -28,6 +28,8 @@ import {
   IgxAutocompleteModule
 } from 'igniteui-angular';
 import { SigninPageComponent } from './signin-page/signin-page.component';
+import { ArticleComponent } from './article/article.component';
+import { ArticlesCreatePageComponent } from './articles-create-page/articles-create-page.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import { SigninPageComponent } from './signin-page/signin-page.component';
     ArticlePageComponent,
     LoginPageComponent,
     HomePageComponent,
-    SigninPageComponent
+    SigninPageComponent,
+    ArticleComponent,
+    ArticlesCreatePageComponent
   ],
   imports: [
     BrowserModule,

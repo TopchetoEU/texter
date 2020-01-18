@@ -205,14 +205,17 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
         }
     }))
         .post("/create", (req, res) => __awaiter(this, void 0, void 0, function* () {
+        var _a;
         function getNextFreeId() {
             return __awaiter(this, void 0, void 0, function* () {
-                const usrs = yield db.db("texter").collection("users").find({}).project({ ID: 1 }).toArray();
-                const ids = [];
+                const ids = (yield db
+                    .db("texter")
+                    .collection("users")
+                    .find({})
+                    .project({ ID: 1 })
+                    .toArray())
+                    .map((v) => v.ID);
                 let id = 0;
-                usrs.forEach((element) => {
-                    ids.push(element.ID);
-                });
                 while (ids.indexOf(id) !== -1) {
                     id = Math.random() * Number.MAX_SAFE_INTEGER;
                 }
@@ -224,24 +227,30 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
-        else if (typeof req.body.New.Username === "undefined") {
+        else if (typeof req.body.New.Username === "undefined" ||
+            req.body.New.Username === "") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
-        else if (typeof req.body.New.Password === "undefined") {
+        else if (typeof req.body.New.Password === "undefined" ||
+            req.body.New.Password === "") {
             res.status(400);
             res.send({ Error: errors.Body.MissingAny });
             return;
+        }
+        else if (((_a = req.body.New.Password.match(passRegEx)) === null || _a === void 0 ? void 0 : _a.length) !== 1) {
+            res.status(400);
+            res.send({ Error: errors.Body.Credentials.InvalidFormat });
         }
         else {
             const newId = yield getNextFreeId();
-            const r = yield db
+            const sameUsers = yield db
                 .db("texter")
                 .collection("users")
                 .find({ Username: req.body.New.Username })
                 .toArray();
-            if (r.length > 0) {
+            if (sameUsers.length > 0) {
                 res.status(400);
                 res.send({ Error: errors.Body.UserExists });
             }

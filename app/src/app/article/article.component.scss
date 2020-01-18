@@ -1,0 +1,43 @@
+igx-card {
+    display: flex;
+    width: 400px;
+    padding: 10px;
+    @media screen and (max-width: 800px) {
+        width: 100%;
+    }
+    igx-card-header {
+        h3 {
+            padding: 0px;
+            margin: 0;
+            text-align: center;
+            width: 100%;
+        }
+        padding: 5px;
+    }
+    igx-card-footer {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        .owner {
+            flex: 1 1 auto;
+            text-align: right;
+            font-size: 10px;
+        }
+        .opinion {
+            position: relative;
+            overflow: visible;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 0;
+            padding: 5px;
+            margin: 0 5px;
+            outline: 0;
+            color: #444;
+            &.activated {
+                color: #455fd1;
+            }
+        }
+    }
+}

@@ -1,3 +1,5 @@
 export const Config = {
-    PasswordregEx: /(\w|[`~!@#$%^&*()\-=+\{\[\]\}\\\|;:'",<.>/? ]){8,32}/g,
+    PasswordRegEx: /([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()\-=+\{\[\]\}\\\|;:'",<.>/?_ ]){8,32}/g,
 };
+
+export type ConfigType = typeof Config;

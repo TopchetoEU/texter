@@ -31,7 +31,7 @@ export class UserPageComponent implements OnInit {
     const ownerId = Number.parseFloat(this.activatedRoute.snapshot.paramMap.get('id'));
 
     this.user = await this.db.Users.Get.ById(ownerId);
-    this.articles = await this.db.Articles.Get.BySelector({ OwnerId: ownerId });
+    this.articles = await this.db.Articles.Get.BySelector({ OwnerId: ownerId }, {});
     this.done = true;
   }
 }

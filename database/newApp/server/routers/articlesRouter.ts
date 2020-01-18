@@ -64,7 +64,7 @@ export function GetArticlesRouter(
             } else {
                 const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
                 if (creds.success) {
-                    if (req.body.Like === -1 || req.body.Like === 1) {
+                    if (req.body.Like === -1 || req.body.Like === 0 || req.body.Like === 1) {
                         const article = await db
                             .db("texter")
                             .collection("articles")
@@ -177,7 +177,6 @@ export function GetArticlesRouter(
         })
         .post("/create", async (req, res) => {
             const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
-            console.log(req.body);
             if (typeof req.body.New === "undefined") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });

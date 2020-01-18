@@ -4,6 +4,7 @@ import { Article, User, DatabaseService } from './database.service';
 import { fromEvent, Observer, Observable, interval } from 'rxjs';
 import { throttleTime, distinct, takeUntil, delay } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { NotificationsService, NotificationType, Notification } from './notifications.service';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,8 @@ export class AppComponent implements AfterViewInit {
   constructor(
     public gs: GlobalsService,
     private db: DatabaseService,
-    private router: Router
+    private router: Router,
+    public notifs: NotificationsService
   ) { }
 
   leftItems: Array<{ path: string, name: string, icon: string }> = [
@@ -74,6 +76,10 @@ export class AppComponent implements AfterViewInit {
     this.foundArticles = [];
   }
 
+  getNotificationName(notType: NotificationType) {
+    return NotificationType[notType];
+  }
+
   updateSearchView(anchoredElement: HTMLElement, anchorElement: HTMLElement) {
     if (this.foundUsers.length > 0 || this.foundArticles.length > 0) {
       const rect = anchorElement.getBoundingClientRect();
@@ -89,5 +95,9 @@ export class AppComponent implements AfterViewInit {
     } else {
       anchoredElement.style.display = 'none';
     }
+  }
+
+  destroyNotificaton(notif: Notification, el: HTMLElement) {
+    notif.destroy();
   }
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DatabaseService, Article, User } from '../database.service';
 
 @Component({
-  selector: 'app-article',
+  selector: 'app-article-page',
   templateUrl: './article-page.component.html',
   styleUrls: ['./article-page.component.scss']
 })

@@ -75,7 +75,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
         else {
             const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
             if (creds.success) {
-                if (req.body.Like === -1 || req.body.Like === 1) {
+                if (req.body.Like === -1 || req.body.Like === 0 || req.body.Like === 1) {
                     const article = yield db
                         .db("texter")
                         .collection("articles")
@@ -194,19 +194,21 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
     }))
         .post("/create", (req, res) => __awaiter(this, void 0, void 0, function* () {
         const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
-        console.log(req.body);
         if (typeof req.body.New === "undefined") {
             res.status(400);
+            console.log('new');
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
         else if (typeof req.body.New.Title === "undefined") {
             res.status(400);
+            console.log('title');
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
         else if (typeof req.body.New.Content === "undefined") {
             res.status(400);
+            console.log('content');
             res.send({ Error: errors.Body.MissingAny });
             return;
         }

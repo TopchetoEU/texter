@@ -209,13 +209,15 @@ export function GetUsersRouter(
         })
         .post("/create", async (req, res) => {
             async function getNextFreeId(): Promise<number> {
-                const usrs = await db.db("texter").collection("users").find({}).project({ ID: 1 }).toArray();
-                const ids: number[] = [];
-                let id = 0;
+                const ids = (await db
+                    .db("texter")
+                    .collection("users")
+                    .find({})
+                    .project({ ID: 1 })
+                    .toArray())
+                    .map((v) => v.ID);
 
-                usrs.forEach((element) => {
-                    ids.push(element.ID);
-                });
+                let id = 0;
 
                 while (ids.indexOf(id) !== -1) {
                     id = Math.random() * Number.MAX_SAFE_INTEGER;
@@ -227,22 +229,30 @@ export function GetUsersRouter(
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
-            } else if (typeof req.body.New.Username === "undefined") {
+            } else if (
+                typeof req.body.New.Username === "undefined" ||
+                req.body.New.Username === "") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
-            } else if (typeof req.body.New.Password === "undefined") {
+            } else if (
+                typeof req.body.New.Password === "undefined" ||
+                req.body.New.Password === "") {
                 res.status(400);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
+            } else if ((req.body.New.Password as string).match(passRegEx)?.length !== 1) {
+                res.status(400);
+                res.send({ Error: errors.Body.Credentials.InvalidFormat });
             } else {
                 const newId = await getNextFreeId();
-                const r = await db
+
+                const sameUsers = await db
                     .db("texter")
                     .collection("users")
                     .find({ Username: req.body.New.Username })
                     .toArray();
-                if (r.length > 0) {
+                if (sameUsers.length > 0) {
                     res.status(400);
                     res.send({ Error: errors.Body.UserExists });
                 } else {

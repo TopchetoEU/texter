@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalsService } from '../globals.service';
-import { DatabaseService } from '../database.service';
+import { DatabaseService, Error } from '../database.service';
 import { Router } from '@angular/router';
+import { NotificationsService, Notification, NotificationType } from '../notifications.service';
 
 @Component({
     selector: 'app-login-page',
@@ -13,7 +14,8 @@ export class LoginPageComponent implements OnInit {
     constructor(
         private globals: GlobalsService,
         private db: DatabaseService,
-        public r: Router
+        public r: Router,
+        private notifications: NotificationsService,
     ) { }
 
     done = true;
@@ -22,11 +24,13 @@ export class LoginPageComponent implements OnInit {
     }
 
     async login(name, password) {
-        const err = (e) => {
+        const err = (e: Error) => {
+            console.log(e);
+            this.notifications.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
             this.done = true;
-            throw e;
         };
         const succ = () => {
+            this.notifications.createNotification(new Notification('Success!', 'Welcome back, ' + name + ' !', NotificationType.Success));
             this.done = true;
             this.r.navigate(['/']);
             return;
@@ -42,7 +46,7 @@ export class LoginPageComponent implements OnInit {
                 this.globals.loggedIn = true;
                 succ();
             } else {
-                err(error);
+                err(error.error);
             }
         } catch (e) {
             err(e);
