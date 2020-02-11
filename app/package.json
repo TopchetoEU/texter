@@ -22,7 +22,7 @@
     "@angular/platform-browser-dynamic": "~9.0.0",
     "@angular/router": "~9.0.0",
     "@types/hammerjs": "^2.0.36",
-    "igniteui-angular": "^8.2.8",
+    "igniteui-angular": "^9.0.0",
     "jszip": "^3.1.5",
     "minireset.css": "~0.0.4",
     "resize-observer-polyfill": "^1.5.1",
