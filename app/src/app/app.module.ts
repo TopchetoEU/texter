@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -16,17 +16,7 @@ import { ArticlePageComponent } from './article-page/article-page.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 
-import {
-  IgxButtonModule,
-  IgxRippleModule,
-  IgxCardModule,
-  IgxInputGroupModule,
-  IgxDropDownModule,
-  IgxToggleModule,
-  IgxIconModule,
-  IgxProgressBarModule,
-  IgxAutocompleteModule
-} from 'igniteui-angular';
+import { IgxButtonModule, IgxRippleModule, IgxCardModule, IgxInputGroupModule, IgxDropDownModule, IgxToggleModule, IgxIconModule, IgxProgressBarModule, IgxAutocompleteModule } from 'igniteui-angular';
 import { SigninPageComponent } from './signin-page/signin-page.component';
 import { ArticleComponent } from './article/article.component';
 import { ArticlesCreatePageComponent } from './articles-create-page/articles-create-page.component';
@@ -63,6 +53,7 @@ import { ArticlesCreatePageComponent } from './articles-create-page/articles-cre
     IgxIconModule,
     IgxProgressBarModule,
     IgxAutocompleteModule,
+    HammerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
