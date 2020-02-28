@@ -3,3 +3,10 @@
     justify-content: center;
     padding-bottom: 25px;
 }
+
+.a {
+    width: 50%;
+    @media screen and (max-width: 800px) {
+        width: 100%;
+    }
+}

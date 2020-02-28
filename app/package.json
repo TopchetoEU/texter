@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "greda": "ng serve --host 192.168.0.104 --disableHostCheck"
   },
   "private": true,
   "dependencies": {

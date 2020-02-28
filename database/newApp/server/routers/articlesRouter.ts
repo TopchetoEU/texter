@@ -64,15 +64,19 @@ export function GetArticlesRouter(
             } else {
                 const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
                 if (creds.success) {
+                    // Chack for accepted like values
                     if (req.body.Like === -1 || req.body.Like === 0 || req.body.Like === 1) {
                         const article = await db
                             .db("texter")
                             .collection("articles")
                             .findOne(req.body.Selector);
+
                         let likeValue = 0;
+                        // Making like a switch
                         if (article.Likers[req.body.Credentials.UserId] !== req.body.Like) {
                             likeValue = req.body.Like;
                         }
+
                         try {
                             const r = await db
                                 .db("texter")

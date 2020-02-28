@@ -1,8 +1,10 @@
 <div class="container">
-    <igx-input-group class="title">
-        <input type="text" #title>
-        <label for="title">Title for the article:</label>
+    <igx-input-group>
+        <input igxInput type="text" name="title" #title>
+        <label igxLabel for="title">Title</label>
     </igx-input-group>
-    <textarea name="content" class="content" #content></textarea>
-    <button class="submit" #submit>Post</button>
+    <igx-input-group>
+        <textarea igxInput name="content" class="content" #content></textarea>
+    </igx-input-group>
+    <button class="submit" (click)="submit(title.value, content.value)">Post</button>
 </div>

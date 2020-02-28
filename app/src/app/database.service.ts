@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 
+const config = {
+  ServerIp: '192.168.0.104:4000'
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -9,15 +13,15 @@ export class DatabaseService {
   public Users = {
     Get: {
       All: async (): Promise<User[]> => {
-        const users = await HTTP.Post('http://46.249.77.12:4001/users/get', { Selector: {} });
+        const users = await HTTP.Post('http://' + config.ServerIp + '/users/get', { Selector: {} });
         return Promise.resolve(users.Found);
       },
       BySelector: async (selector, options?): Promise<User[]> => {
-        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', { Selector: selector, ...options });
+        const res = await HTTP.Post('http://' + config.ServerIp + '/users/get', { Selector: selector, ...options });
         return Promise.resolve(res.Found);
       },
       ById: async (id: number): Promise<User> => {
-        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
+        const res = await HTTP.Post('http://' + config.ServerIp + '/users/get', {
           Selector: { ID: id },
         });
         if (res.Found.length === 1) {
@@ -27,7 +31,7 @@ export class DatabaseService {
         }
       },
       ByName: async (name: string): Promise<User> => {
-        const res = await HTTP.Post('http://46.249.77.12:4001/users/get', {
+        const res = await HTTP.Post('http://' + config.ServerIp + '/users/get', {
           Selector: { Username: name },
         });
         if (res.Found.length === 1) {
@@ -40,7 +44,7 @@ export class DatabaseService {
       }
     },
     Create: async (newUser: { Username: string, Password: string }): Promise<number> => {
-      const result = await HTTP.Post('http://46.249.77.12:4001/users/create', {
+      const result = await HTTP.Post('http://' + config.ServerIp + '/users/create', {
         New: newUser
       });
       if (result.Error.Error === true) {
@@ -54,20 +58,20 @@ export class DatabaseService {
   public Articles = {
     Get: {
       All: async (): Promise<Article[]> => {
-        const articles = await HTTP.Post('http://46.249.77.12:4001/articles/get', {
+        const articles = await HTTP.Post('http://' + config.ServerIp + '/articles/get', {
           Selector: {}
         });
         return Promise.resolve(articles.Found);
       },
       BySelector: async (selector: any, options: any): Promise<Article[]> => {
-        const articles = await HTTP.Post('http://46.249.77.12:4001/articles/get', {
+        const articles = await HTTP.Post('http://' + config.ServerIp + '/articles/get', {
           Selector: selector,
           ...options,
         });
         return Promise.resolve(articles.Found);
       },
       ById: async (id: string): Promise<Article> => {
-        const res = await HTTP.Post('http://46.249.77.12:4001/articles/get', {
+        const res = await HTTP.Post('http://' + config.ServerIp + '/articles/get', {
           Selector: { ID: id }
         });
         if (res.Found.length === 1) {
@@ -93,16 +97,28 @@ export class DatabaseService {
         });
       }
 
-      HTTP.Post('http://46.249.77.12:4001/articles/change', body).then((res) => {
+      HTTP.Post('http://' + config.ServerIp + '/articles/change', body).then((res) => {
         if (res.Error.Error) {
           throw res.Error as Error;
         }
       });
 
+    },
+    Create: async (newArticle: { Title: string, Content: string }, credentials: Credentials) => {
+      const result = await HTTP.Post('http://' + config.ServerIp + '/articles/create', {
+        New: newArticle,
+        Credentials: credentials
+      });
+      if (result.Error.Error === true) {
+        throw result.Error;
+      } else {
+        console.log(result);
+        return result.NewID;
+      }
     }
   };
   public async checkCredentials(credentials: Credentials): Promise<{ error: Error, success: boolean }> {
-    const res = await HTTP.Post('http://46.249.77.12:4001/others/checkCreds', { Credentials: credentials });
+    const res = await HTTP.Post('http://' + config.ServerIp + '/others/checkCreds', { Credentials: credentials });
     return Promise.resolve(res);
   }
 

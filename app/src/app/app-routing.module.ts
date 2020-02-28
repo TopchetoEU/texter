@@ -5,12 +5,14 @@ import { ArticlePageComponent } from './article-page/article-page.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { SigninPageComponent } from './signin-page/signin-page.component';
+import { ArticlesCreatePageComponent } from './articles-create-page/articles-create-page.component';
 
 const routes: Routes = [
   { path: 'user/:id', component: UserPageComponent },
   { path: 'article/:id', component: ArticlePageComponent },
   { path: 'logIn', component: LoginPageComponent },
   { path: 'signin', component: SigninPageComponent },
+  { path: 'post', component: ArticlesCreatePageComponent },
   { path: '', component: HomePageComponent }
 ];
 

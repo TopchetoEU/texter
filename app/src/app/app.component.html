@@ -4,29 +4,38 @@
 
 <div #menu class="menu">
     <div class="items">
-        <button igxButton class="button" igxRipple [igxRippleCentered]="true" *ngFor="let item of leftItems"
+        <!-- Generics -->
+        <button igxButton class="button" igxRipple *ngFor="let item of leftItems"
             [routerLink]="item.path">
             <igx-icon class="phone" style="font-size: 20px;">{{item.icon}}</igx-icon>
-            <span class="desktop">{{item.name}}</span>
+            <span class="name">{{item.name}}</span>
         </button>
-        <button *ngIf="!gs.loggedIn" igxButton class="button" igxRipple [igxRippleCentered]="true" [routerLink]="'/logIn'">
-            <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
-            <span class="desktop">Login</span>
-        </button>
-        <button *ngIf="!gs.loggedIn" igxButton="fab" class="signinButton" igxRipple [routerLink]="'/signin'">
-            <igx-icon class="phone" style="font-size: 20px;">person_add</igx-icon>
-            <span class="desktop">Sign in</span>
-            
-        </button>
-    </div>
-    <div class="bar">
-        <div class="searchBar">
-            <igx-input-group type="search" class="search">
-                <input igxInput type="text" name="search" #search>
-                <label igxLabel for="search">Search</label>
-            </igx-input-group>
+        <div class="bar">
+            <div class="searchBar">
+                <igx-input-group type="search" class="search">
+                    <input igxInput type="text" name="search" #search>
+                    <label igxLabel for="search">Search</label>
+                </igx-input-group>
+            </div>
+            <div class="iconCont" *ngIf="gs.loggedIn">
+                <igx-icon class="account" igxRipple [routerLink]="'user/' + gs.userId">person</igx-icon>
+            </div>
         </div>
-        <igx-icon class="account" *ngIf="gs.loggedIn" igxRipple [routerLink]="'user/' + gs.userId">person</igx-icon>
+        <!-- Log in -->
+        <button *ngIf="!gs.loggedIn" igxButton class="button" igxRipple [routerLink]="'/logIn'">
+            <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
+            <span class="name">Log in</span>
+        </button>
+        <!-- Sign in -->
+        <button *ngIf="!gs.loggedIn" igxButton class="button" igxRipple [routerLink]="'/signin'">
+            <igx-icon class="phone" style="font-size: 20px;">person_add</igx-icon>
+            <span class="name">Sign in</span>
+        </button>
+        <!-- Post -->
+        <button *ngIf="gs.loggedIn" igxButton class="button" igxRipple [routerLink]="'/post'">
+            <igx-icon class="phone" style="font-size: 20px;">pencil</igx-icon>
+            <span class="name">Post</span>
+        </button>
     </div>
 </div>
 
