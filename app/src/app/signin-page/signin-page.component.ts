@@ -21,7 +21,6 @@ export class SigninPageComponent {
   signin(name, password, password2) {
     const err = (e) => {
       this.done = true;
-      console.log(e);
       this.notifications.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
       return;
     };

@@ -3,15 +3,17 @@
         <h3>{{article.Title}}</h3>
     </igx-card-header>
     <igx-card-content>
-        {{article.Content}}
+        <pre style="font: inherit">{{article.Content}}</pre>
     </igx-card-content>
     <igx-card-footer>
         <button [ngClass]="{ 'opinion': true, 'activated': liked }" igxRipple (click)="like(article.ID, 1)">
             <igx-icon>thumb_up</igx-icon>
         </button>
+        {{likeAmount}}
         <button [ngClass]="{ 'opinion': true, 'activated': disliked }" igxRipple (click)="like(article.ID, -1)">
             <igx-icon>thumb_down</igx-icon>
         </button>
+        {{dislikeAmount}}
         <div class="owner">By {{username}}</div>
     </igx-card-footer>
 </igx-card>

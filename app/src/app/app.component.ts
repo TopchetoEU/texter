@@ -42,18 +42,19 @@ export class AppComponent implements AfterViewInit {
     this.router.navigate([url]);
   }
 
-  enterPressed(ev: KeyboardEvent, userId: string) {
-    console.log(ev);
+  enterPressed(ev: KeyboardEvent, userId: string, type: string) {
     if (ev.key === 'Enter') {
-      this.redirect('user/' + userId.toString());
+      this.acceptResult(userId, this.searchInput.nativeElement as HTMLInputElement, type);
     }
+  }
+
+  acceptResult(userId: string, inputElement: HTMLInputElement, type: string) {
+    this.clearSearchElement(inputElement);
+    this.redirect(type + '/' + userId.toString());
   }
 
   ngAfterViewInit(): void {
     const el = (this.searchInput.nativeElement as HTMLInputElement);
-    fromEvent(el, 'input')
-      .subscribe(async () => { this.updateSearchElements(el) });
-
     this.styleInterval.subscribe(() => {
       this.updateSearchView(this.results.nativeElement as HTMLElement, this.searchInput.nativeElement as HTMLElement);
     });

@@ -11,12 +11,12 @@
             <span class="name">{{item.name}}</span>
         </button>
         <div class="bar">
-            <div class="searchBar">
+            <form class="searchBar" autocomplete="off">
                 <igx-input-group type="search" class="search">
-                    <input igxInput type="text" name="search" #search>
+                    <input igxInput type="text" (input)="updateSearchElements(search)" name="search" #search>
                     <label igxLabel for="search">Search</label>
                 </igx-input-group>
-            </div>
+            </form>
             <div class="iconCont" *ngIf="gs.loggedIn">
                 <igx-icon class="account" igxRipple [routerLink]="'user/' + gs.userId">person</igx-icon>
             </div>
@@ -33,15 +33,18 @@
         </button>
         <!-- Post -->
         <button *ngIf="gs.loggedIn" igxButton class="button" igxRipple [routerLink]="'/post'">
-            <igx-icon class="phone" style="font-size: 20px;">pencil</igx-icon>
+            <igx-icon class="phone" style="font-size: 20px;">create</igx-icon>
             <span class="name">Post</span>
         </button>
     </div>
 </div>
 
 <div class="searchResults" #results>
-    <div class="element" *ngFor="let user of foundUsers" igxRipple [routerLink]="'user/' + user.ID" (click)="clearSearchElement(search)">
+    <div class="element" *ngFor="let user of foundUsers" igxRipple (click)="acceptResult(user.ID, search, 'user')">
         {{user.Username}}
+    </div>
+    <div class="element" *ngFor="let article of foundArticles" igxRipple (click)="acceptResult(article.ID, search, 'article')">
+        {{article.Title}}
     </div>
 </div>
 

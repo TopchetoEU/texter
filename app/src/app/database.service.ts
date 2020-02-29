@@ -50,7 +50,6 @@ export class DatabaseService {
       if (result.Error.Error === true) {
         throw result.Error;
       } else {
-        console.log(result);
         return result.NewID;
       }
     },
@@ -105,15 +104,18 @@ export class DatabaseService {
 
     },
     Create: async (newArticle: { Title: string, Content: string }, credentials: Credentials) => {
-      const result = await HTTP.Post('http://' + config.ServerIp + '/articles/create', {
-        New: newArticle,
-        Credentials: credentials
-      });
-      if (result.Error.Error === true) {
-        throw result.Error;
+      if (newArticle.Title.length !== 0 && newArticle.Content.length !== 0) {
+        const result = await HTTP.Post('http://' + config.ServerIp + '/articles/create', {
+          New: newArticle,
+          Credentials: credentials
+        });
+        if (result.Error.Error === true) {
+          throw result.Error;
+        } else {
+          return result.NewID;
+        }
       } else {
-        console.log(result);
-        return result.NewID;
+        throw new Error('Title and content are required', 'Please fill in content and/or title');
       }
     }
   };
@@ -125,26 +127,30 @@ export class DatabaseService {
   public async searchAll(value: string): Promise<{ Users: User[], Articles: Article[] }> {
     const regex = '(' + value.split(/[, ]/g).join(')(') + ')';
 
-    const users: User[] = await this.Users.Get.BySelector({
-      DoPaging: true,
-      Paging: {
-        PageSize: 20,
-        PageCount: 0,
-      },
-      Selector: {
+    console.log(regex);
+
+    const users: User[] = await this.Users.Get.BySelector(
+      {
         Username: { $regex: regex }
-      }
+      },
+      {
+        DoPaging: true,
+        Paging: {
+          PageSize: 20,
+          PageCount: 0,
+        }
     });
-    const articles: Article[] = await this.Articles.Get.BySelector({
+    const articles: Article[] = await this.Articles.Get.BySelector(
+      {
+        Title: { $regex: regex }
+      },
+      {
       DoPaging: true,
       Paging: {
         PageSize: 20,
         PageCount: 0,
-      },
-      Selector: {
-        Title: { $regex: regex }
       }
-    }, {});
+      });
 
     return Promise.resolve({ Users: users, Articles: articles });
   }

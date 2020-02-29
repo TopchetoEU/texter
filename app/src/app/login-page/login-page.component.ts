@@ -25,7 +25,6 @@ export class LoginPageComponent implements OnInit {
 
     async login(name, password) {
         const err = (e: Error) => {
-            console.log(e);
             this.notifications.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
             this.done = true;
         };

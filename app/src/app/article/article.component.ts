@@ -30,6 +30,14 @@ export class ArticleComponent implements OnInit {
     return this._disliked;
   }
 
+  public get likeAmount(): number {
+    return this._likeAmount + (this.liked ? 1 : 0);
+  }
+
+  public get dislikeAmount(): number {
+    return this._dislikeAmount + (this.disliked ? 1 : 0);
+  }
+
   constructor(
     private notifs: NotificationsService,
     public db: DatabaseService,
@@ -42,17 +50,17 @@ export class ArticleComponent implements OnInit {
 
     if (this.globals.loggedIn) {
 
-      console.log(artcl);
-
       this._liked =    artcl.Likers[this.globals.userId] === 1;
       this._disliked = artcl.Likers[this.globals.userId] === -1;
     }
 
     for (const user in artcl.Likers) {
-      if (artcl.Likers[user] === -1) {
-        this._dislikeAmount++;
-      } else if (artcl.Likers[user] === 1) {
-        this._likeAmount--;
+      if (Number.parseFloat(user) !== this.globals.userId) {
+        if (artcl.Likers[user] === -1) {
+          this._dislikeAmount++;
+        } else if (artcl.Likers[user] === 1) {
+          this._likeAmount++;
+        }
       }
     }
   }
@@ -69,25 +77,6 @@ export class ArticleComponent implements OnInit {
     if (!this.globals.loggedIn) {
       err(new Error('Log in.', 'You must be logged in to newLike and dislike content.'));
     } else {
-      if (newLike === 1) {
-        this._likeAmount++;
-        this._dislikeAmount--;
-      }
-      if (newLike === -1) {
-        this._likeAmount--;
-        this._dislikeAmount++;
-      }
-      if (newLike === 0) {
-        if (this._liked) {
-          this._likeAmount--;
-        }
-        if (this._disliked) {
-          this._dislikeAmount--;
-        }
-      }
-
-      console.log(newLike);
-
       this._liked = newLike === 1;
       this._disliked = newLike === -1;
 
