@@ -67,6 +67,12 @@ button {
             }
         }
     }
+    .search {
+        width: 100%;
+        input {
+            width: 100%;
+        }
+    }
 }
 .searchResults {
     position: fixed;
@@ -214,9 +220,11 @@ button {
                 padding: 10px 40px;
                 background-color: #fff;
                 box-shadow: 0 -10px 20px #000000;
-
-                .searchBar {
+                .search {
                     width: 100%;
+                    input {
+                        width: 100%;
+                    }
                 }
             }
         }
@@ -227,6 +235,11 @@ button {
     .content {
         padding: 10px;
         padding-top: 100px;
+    }
+    .search {
+        display: block;
+        width: 100%;
+        margin: 0 10px;
     }
 
     .menu {
@@ -245,10 +258,6 @@ button {
             .bar {
                 display: contents;
                 flex: 1 1 auto;
-                .searchBar {
-                    display: block;
-                    width: 100%;
-                }
             }
         }
     }

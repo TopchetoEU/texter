@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
@@ -16,7 +17,15 @@ import { ArticlePageComponent } from './article-page/article-page.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 
-import { IgxButtonModule, IgxRippleModule, IgxCardModule, IgxInputGroupModule, IgxDropDownModule, IgxToggleModule, IgxIconModule, IgxProgressBarModule, IgxAutocompleteModule } from 'igniteui-angular';
+import { IgxButtonModule,
+  IgxRippleModule,
+  IgxCardModule,
+  IgxInputGroupModule,
+  IgxDropDownModule,
+  IgxToggleModule,
+  IgxIconModule,
+  IgxProgressBarModule,
+  IgxAutocompleteModule } from 'igniteui-angular';
 import { SigninPageComponent } from './signin-page/signin-page.component';
 import { ArticleComponent } from './article/article.component';
 import { ArticlesCreatePageComponent } from './articles-create-page/articles-create-page.component';
@@ -34,6 +43,7 @@ import { ArticlesCreatePageComponent } from './articles-create-page/articles-cre
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,

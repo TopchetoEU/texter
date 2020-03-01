@@ -1,72 +1,85 @@
-import { Router } from "express";
+import e, { Router } from "express";
 import { MongoClient } from "mongodb";
 import sha256 from "sha256";
 import { ErrorsType } from "../../errors";
-import { CredentialsChecker } from "../credentialsChecker";
+import { CredentialsChecker, Error } from "../credentialsChecker";
 
-enum Changeables {
+// All changeable properties of Article
+enum Changeable {
     Title,
     Content,
     UserId,
 }
 
 export function GetArticlesRouter(
-    db: MongoClient, errors: ErrorsType,
+    database: MongoClient, errors: ErrorsType,
     checkCredentials: CredentialsChecker,
     passRegEx: RegExp): Router {
     return Router()
         .post("/get", async (req, res) => {
+            // Checks if the selector is there
             if (typeof req.body.Selector === "undefined") {
-                res.status(400);
+                res.status(200);
                 res.send({
                     Error: errors.Body.Missing.Selector,
                 });
+            // Checks is the selector a object
             } else if (typeof req.body.Selector !== "object") {
-                res.status(400);
+                res.status(200);
                 res.send({
                     Error: errors.Body.InvalidType.Selector,
                 });
             } else {
-                let a = db
+                // The db cursor without paging
+                let cursor = database
                     .db("texter")
                     .collection("articles")
                     .find(req.body.Selector)
                     .project({ _id: 0 });
+
+                // Pages the response, if required
                 if (req.body.DoPaging === true) {
+                    // Type check
+
                     if (typeof req.body.Paging.PageSize !== "number") {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
                     }
                     if (typeof req.body.Paging.PageCount !== "number") {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
                     } else {
-                        a = a.limit(req.body.Paging.PageSize);
-                        a = a.skip(req.body.Paging.PageSize * req.body.Paging.PageCount);
+                        cursor = cursor.limit(req.body.Paging.PageSize);
+                        cursor = cursor.skip(req.body.Paging.PageSize * req.body.Paging.PageCount);
                     }
                 }
-                const result = await a.toArray();
+
+                // Calculates result
+                const result = await cursor.toArray();
                 res.send({
                     Error: {
                         Error: false,
                     },
-                    Found: result,
+                    // --------------------- Makes sure user, created by old standard is compatible
+                    Found: result.map((v) => BackwardCompatibility.toLatestGen(v)),
                 });
             }
         })
         .post("/change", async (req, res) => {
+            // Check for selector type
             if (typeof req.body.Selector === "undefined") {
                 res.send({ Error: errors.Body.Missing.Selector });
             } else {
-                const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
-                if (creds.success) {
-                    // Chack for accepted like values
+                // Verification of credentials (password, etc...)
+                const verification = await checkCredentials(req.body.Credentials, database, passRegEx, errors);
+                if (verification.success) {
+                    // Check for accepted like values
                     if (req.body.Like === -1 || req.body.Like === 0 || req.body.Like === 1) {
-                        const article = await db
+                        const article = await database
                             .db("texter")
                             .collection("articles")
                             .findOne(req.body.Selector);
@@ -78,7 +91,8 @@ export function GetArticlesRouter(
                         }
 
                         try {
-                            const r = await db
+                            // Stores update results
+                            const updateResults = await database
                                 .db("texter")
                                 .collection("articles")
                                 .update(req.body.Selector, {
@@ -90,21 +104,24 @@ export function GetArticlesRouter(
                                 });
                             res.send({
                                 Error: false,
-                                UpdatedElementCount: r.result.ok === 1,
+                                UpdatedElementCount: updateResults.result.ok === 1,
                             });
+                        // Catches a unexpected error
                         } catch (e) {
-                            res.status(400);
+                            res.status(200);
                             res.send({
                                 Error: {
                                     Error: true,
                                     ErrorDetails: {
-                                        General: "Unknow error",
-                                        More: "Contact the dumb admin wich made this unworking!",
+                                        General: "Unknown error",
+                                        More: "Contact the dumb admin which made this nonworking!",
                                     },
                                 },
                             });
                         }
+                    // DoModify soon will be deprecated and won't be required
                     } else if (req.body.DoModify === true) {
+                        // Modify is a list of property - value key pair for value updates
                         if (typeof req.body.Modify === "object") {
                             const selector = req.body.Selector;
                             const modifyList: any = {};
@@ -113,7 +130,7 @@ export function GetArticlesRouter(
                                 if (req.body.Modify.hasOwnProperty(modifyPropName)) {
                                     const modifyValue = req.body.Modify[modifyPropName];
                                     let modifiableValid = false;
-                                    for (const key in Changeables) {
+                                    for (const key in Changeable) {
                                         if (modifyPropName === key) {
                                             modifiableValid = true;
                                             break;
@@ -122,13 +139,13 @@ export function GetArticlesRouter(
                                     if (modifiableValid) {
                                         modifyList[modifyPropName] = modifyValue;
                                     } else {
-                                        res.status(400);
+                                        res.status(200);
                                         res.send({
                                             Error: {
                                                 Error: true,
                                                 ErrorDetails: {
                                                     General: "Modification property name not valid",
-                                                    More: "Make sure you're not providing somthing else from all changeable properties",
+                                                    More: "Make sure you're not providing something else from all changeable properties",
                                                 },
                                             },
                                         });
@@ -137,7 +154,7 @@ export function GetArticlesRouter(
                                 }
                             }
                             if (modifyList !== {}) {
-                                const r = await db
+                                const r = await database
                                     .db("texter")
                                     .collection("articles")
                                     .updateMany(selector, { $set: modifyList });
@@ -150,7 +167,7 @@ export function GetArticlesRouter(
                                 });
                             }
                         } else {
-                            res.status(400);
+                            res.status(200);
                             res.send({
                                 Error: {
                                     Error: true,
@@ -174,39 +191,45 @@ export function GetArticlesRouter(
                         });
                     }
                 } else {
-                    res.status(400);
-                    res.send({ Error: creds.error });
+                    res.status(200);
+                    res.send({ Error: verification.error });
                 }
             }
         })
         .post("/create", async (req, res) => {
-            const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
+            // Credentials check
+            const verification = await checkCredentials(req.body.Credentials, database, passRegEx, errors);
+
+            // Type checks
             if (typeof req.body.New === "undefined") {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
-            } else if (typeof req.body.New.Title === "undefined") {
-                res.status(400);
-                res.send({ Error: errors.Body.MissingAny });
+            } else if (typeof req.body.New.Title === "undefined" || req.body.New.Title.trim().length === 0) {
+                res.status(200);
+                res.send({ Error: new Error("Title is missing!", "A title is required for a post")});
                 return;
-            } else if (typeof req.body.New.Content === "undefined") {
-                res.status(400);
-                res.send({ Error: errors.Body.MissingAny });
+            } else if (typeof req.body.New.Content === "undefined" || req.body.New.Content.trim().length === 0) {
+                res.status(200);
+                res.send({ Error: new Error("Content is missing!", "A content is required for a post")});
                 return;
-            } else if (creds.success) {
+            } else if (verification.success) {
+                // A id is generated
                 const newId = sha256(req.body.New.Title);
-                const r = await db
+                const conflictingArticles = await database
                     .db("texter")
                     .collection("articles")
                     .find({ ID: newId })
                     .toArray();
-                if (r.length > 0) {
-                    res.status(400);
+                if (conflictingArticles.length > 0) {
+                    res.status(200);
                     res.send({ Error: errors.Body.ArticleExists });
                 } else {
+                    // Generating new article
                     const article = {
                         Content: req.body.New.Content,
                         CreatorId: req.body.Credentials.UserId,
+                        Date: new Date().getTime(),
                         ID: newId,
                         Likers: {
                             [req.body.Credentials.UserId]: 1,
@@ -214,11 +237,14 @@ export function GetArticlesRouter(
                         OwnerId: req.body.Credentials.UserId,
                         Title: req.body.New.Title,
                     };
-                    await db
+                    // Adding article to database
+                    database
                         .db("texter")
                         .collection("articles")
                         .insertOne(article);
-                    db
+
+                    // Adding article to the owner's articles list
+                    database
                         .db("texter")
                         .collection("users")
                         .updateMany({ ID: req.body.Credentials.UserId }, {
@@ -235,32 +261,36 @@ export function GetArticlesRouter(
                     });
                 }
             } else {
-                res.status(400);
+                res.status(200);
                 res.send({
-                    Error: creds.error,
+                    Error: verification.error,
                 });
             }
         })
         .post("/delete", async (req, res) => {
-            const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
-            if (creds.success) {
-                const filter = req.body.Selector;
-                filter.CreatorId = req.body.Credentials.UserId;
-                const re = await db
-                    .db("texter")
-                    .collection("articles")
-                    .find(filter)
-                    .toArray();
-                const articleIds: number[] = [];
-                re.forEach((el) => {
-                    articleIds.push(el.ID);
-                });
+            // Verifying credentials
+            const verification = await checkCredentials(req.body.Credentials, database, passRegEx, errors);
+            if (verification.success) {
+                // Creating selector
+                const selector = req.body.Selector;
+                selector.CreatorId = req.body.Credentials.UserId;
 
-                const r = await db
+                // Getting all article IDs, that must be deleted
+                const articleIds = (await database
                     .db("texter")
                     .collection("articles")
-                    .deleteMany(filter);
-                db
+                    .find(selector)
+                    .toArray())
+                    .map((v) => v.ID);
+
+                // Deleting all articles by the given selector
+                const result = await database
+                    .db("texter")
+                    .collection("articles")
+                    .deleteMany(selector);
+
+                // Removing all articles' dependencies to the owner
+                database
                     .db("texter")
                     .collection("users")
                     .updateMany({ ID: req.body.Credentials.UserId }, {
@@ -269,14 +299,31 @@ export function GetArticlesRouter(
                         },
                     });
                 res.send({
-                    Deleted: r.result.n,
+                    Deleted: result.result.n,
                     Error: {
                         Error: false,
                     },
                 });
             } else {
-                res.status(400);
-                res.send({ Error: creds.error });
+                res.status(200);
+                res.send({ Error: verification.error });
             }
         });
+}
+
+// Support for older formats
+export class BackwardCompatibility {
+    // In gen 2, there is support for dates
+    public static toGen2(article: any) {
+        if (typeof article.Date !== "number") {
+            article.Date = 0;
+        }
+
+        return article;
+    }
+
+    // For no breaking changes, there is toLatestGen, so you can just call it
+    public static toLatestGen(article: any) {
+        return this.toGen2(article);
+    }
 }

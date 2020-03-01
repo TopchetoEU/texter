@@ -1,10 +1,14 @@
 <div class="container">
-    <igx-input-group>
-        <input igxInput type="text" name="title" #title>
-        <label igxLabel for="title">Title</label>
-    </igx-input-group>
-    <igx-input-group>
-        <textarea igxInput name="content" class="content" #content></textarea>
-    </igx-input-group>
-    <button class="submit" (click)="submit(title.value, content.value)">Post</button>
+    <div>
+        <igx-input-group (keyup)="keyDown(title.value, content.value, $event)">
+            <input igxInput type="text" name="title" #title>
+            <label igxLabel for="title">Title</label>
+        </igx-input-group>
+        <igx-input-group>
+            <textarea igxInput name="content" class="content" #content style="resize: none; height: 200px;" placeholder="Content"></textarea>
+        </igx-input-group>
+        <div style="display: flex; justify-content: center; margin: 10px;">
+            <button class="submit" igxButton igxRipple [igxRippleCentered]="false" (click)="submit(title.value, content.value)">Post</button>
+        </div>
+    </div>
 </div>
