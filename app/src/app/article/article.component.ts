@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, NgZone } from '@angular/core';
 import { Article, DatabaseService, Like, Error } from '../database.service';
 import { NotificationsService, Notification, NotificationType } from '../notifications.service';
 import { GlobalsService } from '../globals.service';
@@ -9,15 +9,38 @@ import { GlobalsService } from '../globals.service';
   styleUrls: ['./article.component.scss']
 })
 export class ArticleComponent implements OnInit {
-  @Input()
   public article: Article;
-
   public username = '';
 
-  // tslint:disable-next-line: variable-name
+  private months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+
+  @Input()
+  public get articleId(): string {
+    return this._articleId;
+  }
+  public set articleId(value: string) {
+    this._articleId = value;
+    this.refresh();
+  }
+  _articleId: string;
+
   private _liked = false;
-  // tslint:disable-next-line: variable-name
+  private _likeAmount = 0;
   private _disliked = false;
+  private _dislikeAmount = 0;
 
   public get liked(): boolean {
     return this._liked;
@@ -26,44 +49,89 @@ export class ArticleComponent implements OnInit {
     return this._disliked;
   }
 
+  public get likeAmount(): number {
+    return this._likeAmount + (this.liked ? 1 : 0);
+  }
+  public get dislikeAmount(): number {
+    return this._dislikeAmount + (this.disliked ? 1 : 0);
+  }
+
   constructor(
     private notifs: NotificationsService,
     public db: DatabaseService,
-    private globals: GlobalsService
+    private globals: GlobalsService,
+    private zone: NgZone
   ) { }
 
-  async ngOnInit() {
-    this.username = (await this.db.Users.Get.ById(this.article.OwnerId)).Username;
-    this.updateLikeButtons();
+  ngOnInit() {
   }
-  async updateLikeButtons() {
-    if (this.globals.loggedIn) {
-      const artcl = await this.db.Articles.Get.ById(this.article.ID);
 
-      console.log(artcl);
+  public toDateFormat(uch: number) {
+    const date = new Date(uch);
+    return `${(date.getDay() + 1)}` +
+      `${(date.getDay() + 1) % 10 === 1 ?
+        'st' : ((date.getDay() + 1) % 10 === 2 ?
+        'nd' : ((date.getDay() + 1) % 10 === 3 ?
+        'rd' : 'th'))}` +
+      ` of ${this.months[date.getMonth()]}, ${date.getFullYear()}`;
+  }
 
-      this._liked =    artcl.Likers[this.globals.userId] === 1;
-      this._disliked = artcl.Likers[this.globals.userId] === -1;
+  refresh = () => {
+    const t = this;
+    this.zone.run(() => {
+      t.db.getArticleBySelector({ ID: this.articleId }).subscribe(
+        artcl => {
+          this.article = artcl;
+
+          t.db.getUserBySelector({ ID: artcl.OwnerId }).subscribe(
+            user => {
+              t.username = user.Username;
+
+              if (t.globals.loggedIn) {
+                t._liked = artcl.Likers[t.globals.userId] === 1;
+                t._disliked = artcl.Likers[t.globals.userId] === -1;
+              }
+
+              for (const user1 in artcl.Likers) {
+                if (Number.parseFloat(user1) !== t.globals.userId) {
+                  if (artcl.Likers[user1] === -1) {
+                    t._dislikeAmount++;
+                  } else if (artcl.Likers[user1] === 1) {
+                    t._likeAmount++;
+                  }
+                }
+              }
+            }
+          );
+        }
+      );
+    });
+  }
+
+  like(id: string, like: number) {
+    let newLike = like;
+
+    if (this.liked && like === 1 || this.disliked && like === -1) {
+      newLike = 0;
     }
-  }
-
-  like(id: number, like: number) {
     const err = (e: Error) => {
-        this.notifs.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
+      this.notifs.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
     };
     if (!this.globals.loggedIn) {
       err(new Error('Log in.', 'You must be logged in to like and dislike content.'));
     } else {
-      this.db.Articles.Change({ ID: id }, {
+      this._liked = newLike === 1;
+      this._disliked = newLike === -1;
+
+      this.db.changeArticles({ ID: id }, {
+        Like: like,
+      }, {
         UserId: this.globals.userId,
         Password: this.globals.password
-      }, {
-        Like: like
-      }).then(() => {
-        setTimeout(() => this.updateLikeButtons(), 10);
-      }).catch((e) => {
+      }).subscribe({
+        error: (e) => {
         err(e);
-      });
+      }});
     }
   }
 }

@@ -1,12 +1,12 @@
 igx-card {
     display: flex;
-    width: 400px;
+    width: 100%;
     padding: 10px;
     @media screen and (max-width: 800px) {
         width: 100%;
     }
     igx-card-header {
-        h3 {
+        h5 {
             padding: 0px;
             margin: 0;
             text-align: center;
@@ -17,11 +17,14 @@ igx-card {
     igx-card-footer {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         width: 100%;
         .owner {
-            flex: 1 1 auto;
             text-align: right;
             font-size: 10px;
+            outline: 0;
+            cursor: pointer;
+            user-select: none;
         }
         .opinion {
             position: relative;
@@ -35,9 +38,14 @@ igx-card {
             margin: 0 5px;
             outline: 0;
             color: #444;
+            user-select: none;
             &.activated {
                 color: #455fd1;
             }
+            cursor: pointer;
+        }
+        * {
+            user-select: none;
         }
     }
 }

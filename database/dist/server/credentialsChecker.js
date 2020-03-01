@@ -14,8 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sha256_1 = __importDefault(require("sha256"));
 class Error {
+    constructor(general, more) {
+        this.ErrorDetails = {
+            General: general,
+            More: more,
+        };
+        this.Error = true;
+    }
 }
 exports.Error = Error;
+Error.noError = { Error: false };
 // tslint:disable-next-line: max-classes-per-file
 class Credentials {
 }
@@ -41,7 +49,7 @@ exports.DefaultCredentialsChecker = (creds, db, passRegEx, errors) => __awaiter(
     else if (typeof creds.Password !== "string") {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
     }
-    else if (creds.Password.match(passRegEx).length !== 1) {
+    else if (creds.Password.match(passRegEx) && creds.Password.match(passRegEx).length !== 1) {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
     }
     else if (creds.Password.length < 8 || creds.Password.length > 64) {

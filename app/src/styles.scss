@@ -8,3 +8,7 @@ $app-palette: igx-palette($primary, $secondary);
 
 html, body { min-height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+* {
+    outline: 0;
+}

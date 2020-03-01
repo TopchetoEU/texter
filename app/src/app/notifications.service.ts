@@ -22,7 +22,7 @@ export class NotificationsService {
     this.notifications.push(notification);
     setTimeout(() => {
       this.deleteDelegate(notification);
-    }, (notification.title.length + notification.content.length) * 10 + 2000);
+    }, (notification.title.length + notification.content.length) * 30 + 2000);
   }
 }
 

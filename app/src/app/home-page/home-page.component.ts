@@ -24,7 +24,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     window.scrollTo(0, 0);
     this.intervalId = setInterval(() => {
       this.loadNewContent();
-    }, 100);
+    }, 1000);
   }
 
   ngOnDestroy() {
@@ -33,13 +33,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   loadNewContent() {
     if (!this.articlesEnded && this.contentLoadRequired()) {
-      this.db.Articles.Get.BySelector({}, {
+      this.db.getArticlesBySelector({}, {
         DoPaging: true,
         Paging: {
           PageSize: 20,
           PageCount: this.index,
         }
-      }).then((articles) => {
+      }).subscribe(articles => {
         if (articles.length > 0) {
           articles.forEach(v => {
             this.articles.push(v);
@@ -57,7 +57,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const windowHeight = window.innerHeight;
     const bodyHeight = document.body.getBoundingClientRect().height;
     const scroll = window.scrollY;
-    //const scrollLevel = (scroll) / (bodyHeight - windowHeight);
 
     return scroll > bodyHeight - 2 * windowHeight;
   }

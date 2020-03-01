@@ -30,7 +30,7 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
     return express_1.Router()
         .post("/get", (req, res) => __awaiter(this, void 0, void 0, function* () {
         if (typeof req.body.Selector === "undefined") {
-            res.status(400);
+            res.status(200);
             res.send({
                 Error: errors.Body.Missing.Selector,
             });
@@ -42,13 +42,13 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
                 .find(req.body.Selector);
             if (req.body.DoPaging === true) {
                 if (typeof req.body.Paging.PageSize !== "number") {
-                    res.status(400);
+                    res.status(200);
                     res.send({
                         Error: errors.Body.InvalidType.PageSizeOrCount,
                     });
                 }
                 if (typeof req.body.Paging.PageCount !== "number") {
-                    res.status(400);
+                    res.status(200);
                     res.send({
                         Error: errors.Body.InvalidType.PageSizeOrCount,
                     });
@@ -71,53 +71,30 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
         const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
         if (creds.success) {
             if ((req.body.Follow === true) && typeof req.body.Selector === "object") {
-                const coll = db.db("texter").collection("users");
-                const selectorA = Object.create(req.body.Selector);
-                selectorA.Followers = { $in: [req.body.Credentials.UserId] };
-                const selectorB = Object.create(req.body.Selector);
-                selectorB.Followers = { $nin: [req.body.Credentials.UserId] };
-                // Marks all users to unfollow
-                coll.update(selectorA, {
-                    $set: {
-                        Debug: DebugStates.Unfollow,
-                    },
-                });
-                // Marks all users to follow
-                coll.update(selectorB, {
-                    $set: {
-                        Debug: DebugStates.Follow,
-                    },
-                });
+                const collection = db.db("texter").collection("users");
+                const unfollowSelector = Object.create(req.body.Selector);
+                unfollowSelector.Followers = { $in: [req.body.Credentials.UserId] };
+                const followSelector = Object.create(req.body.Selector);
+                followSelector.Followers = { $nin: [req.body.Credentials.UserId] };
+                const unfollowIds = (yield collection.find(unfollowSelector).toArray()).map((v) => v.ID);
+                const followIds = (yield collection.find(followSelector).toArray()).map((v) => v.ID);
                 // Unfollows all users marked so
-                coll.update({ Debug: DebugStates.Unfollow }, {
+                collection.updateMany(unfollowSelector, {
                     $pull: {
                         Followers: req.body.Credentials.UserId,
                     },
                 });
-                // Follows all users maked so
-                coll.update({ Debug: DebugStates.Follow }, {
+                // Follows all users marked so
+                collection.updateMany(followSelector, {
                     $push: {
                         Followers: req.body.Credentials.UserId,
                     },
                 });
-                const unfollow = yield coll.find({ Debug: 1 }).toArray();
-                const follow = yield coll.find({ Debug: 0 }).toArray();
-                const modF = [];
-                const modUf = [];
-                unfollow.forEach((element) => {
-                    modUf.push(element.ID);
+                collection.updateMany({ ID: req.body.Credentials.UserId }, {
+                    $push: { Following: { $each: followIds } },
                 });
-                follow.forEach((element) => {
-                    modF.push(element.ID);
-                });
-                yield coll.updateOne({ ID: req.body.Credentials.UserId }, {
-                    $push: { Following: { $each: modF } },
-                });
-                yield coll.updateOne({ ID: req.body.Credentials.UserId }, {
-                    $pull: { Following: { $in: modUf } },
-                });
-                yield coll.updateOne({ ID: req.body.Credentials.UserId }, {
-                    $set: { Debug: DebugStates.None },
+                collection.updateMany({ ID: req.body.Credentials.UserId }, {
+                    $pull: { Following: { $in: unfollowIds } },
                 });
                 res.send({
                     Error: false,
@@ -145,7 +122,7 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
                                 }
                             }
                             else {
-                                res.status(400);
+                                res.status(200);
                                 res.send({
                                     Error: {
                                         Error: true,
@@ -174,7 +151,7 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
                     }
                 }
                 else {
-                    res.status(400);
+                    res.status(200);
                     res.send({
                         Error: {
                             Error: true,
@@ -200,7 +177,7 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
             }
         }
         else {
-            res.status(400);
+            res.status(200);
             res.send({ Error: creds.error });
         }
     }))
@@ -223,24 +200,24 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
             });
         }
         if (typeof req.body.New === "undefined") {
-            res.status(400);
+            res.status(200);
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
         else if (typeof req.body.New.Username === "undefined" ||
             req.body.New.Username === "") {
-            res.status(400);
+            res.status(200);
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
         else if (typeof req.body.New.Password === "undefined" ||
             req.body.New.Password === "") {
-            res.status(400);
+            res.status(200);
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
         else if (((_a = req.body.New.Password.match(passRegEx)) === null || _a === void 0 ? void 0 : _a.length) !== 1) {
-            res.status(400);
+            res.status(200);
             res.send({ Error: errors.Body.Credentials.InvalidFormat });
         }
         else {
@@ -251,7 +228,7 @@ function GetUsersRouter(db, errors, checkCredentials, passRegEx) {
                 .find({ Username: req.body.New.Username })
                 .toArray();
             if (sameUsers.length > 0) {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.UserExists });
             }
             else {

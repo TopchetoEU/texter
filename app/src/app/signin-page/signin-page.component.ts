@@ -21,7 +21,6 @@ export class SigninPageComponent {
   signin(name, password, password2) {
     const err = (e) => {
       this.done = true;
-      console.log(e);
       this.notifications.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
       return;
     };
@@ -37,10 +36,10 @@ export class SigninPageComponent {
     }
 
     this.done = false;
-    this.db.Users.Create({ Username: name, Password: password })
-      .then(() => {
+    this.db.createUser({ Username: name, Password: password })
+      .subscribe(() => {
         succ();
-      }).catch((e) => {
+      }, (e) => {
         err(e);
       });
   }

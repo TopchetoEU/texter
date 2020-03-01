@@ -8,7 +8,7 @@
     "body-parser": "1.19.0",
     "cors": "2.8.5",
     "express": "^4.17.1",
-    "mongodb": "3.3.3",
+    "mongodb": "^3.5.0",
     "sha256": "0.2.0"
   },
   "devDependencies": {
@@ -20,7 +20,6 @@
     "eslint": "^6.6.0"
   },
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "build+start": "tsc && node ./dist/app.js",
     "start": "node ./dist/app.js"
