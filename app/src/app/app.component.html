@@ -11,19 +11,17 @@
             <span class="name">{{item.name}}</span>
         </button>
         <div class="bar">
-            <form class="searchBar" autocomplete="off">
-                <igx-input-group type="search" class="search">
-                    <input igxInput type="text" (input)="updateSearchElements(search)" name="search" #search>
-                    <label igxLabel for="search">Search</label>
-                </igx-input-group>
-            </form>
+            <igx-input-group type="search" class="search">
+                <input igxInput type="search" type="text" (input)="updateSearchElements(search)" name="search" #search>
+                <label igxLabel for="search">Search users and articles</label>
+            </igx-input-group>
             <div class="iconCont" *ngIf="gs.loggedIn">
                 <igx-icon class="account" igxRipple [routerLink]="'user/' + gs.userId">person</igx-icon>
             </div>
         </div>
         <!-- Log in -->
         <button *ngIf="!gs.loggedIn" igxButton class="button" igxRipple [routerLink]="'/logIn'">
-            <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
+            <igx-icon class="phone" style="font-size: 20px;">input</igx-icon>
             <span class="name">Log in</span>
         </button>
         <!-- Sign in -->
@@ -35,6 +33,11 @@
         <button *ngIf="gs.loggedIn" igxButton class="button" igxRipple [routerLink]="'/post'">
             <igx-icon class="phone" style="font-size: 20px;">create</igx-icon>
             <span class="name">Post</span>
+        </button>
+        <!-- Log out -->
+        <button *ngIf="gs.loggedIn" igxButton class="button" igxRipple>
+            <igx-icon class="phone" style="font-size: 20px;">exit_to_app</igx-icon>
+            <span class="name">Log out</span>
         </button>
     </div>
 </div>

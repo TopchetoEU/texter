@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const sha256_1 = __importDefault(require("sha256"));
+const credentialsChecker_1 = require("../credentialsChecker");
 var Changeables;
 (function (Changeables) {
     Changeables[Changeables["Title"] = 0] = "Title";
@@ -24,13 +25,13 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
     return express_1.Router()
         .post("/get", (req, res) => __awaiter(this, void 0, void 0, function* () {
         if (typeof req.body.Selector === "undefined") {
-            res.status(400);
+            res.status(200);
             res.send({
                 Error: errors.Body.Missing.Selector,
             });
         }
         else if (typeof req.body.Selector !== "object") {
-            res.status(400);
+            res.status(200);
             res.send({
                 Error: errors.Body.InvalidType.Selector,
             });
@@ -43,13 +44,13 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                 .project({ _id: 0 });
             if (req.body.DoPaging === true) {
                 if (typeof req.body.Paging.PageSize !== "number") {
-                    res.status(400);
+                    res.status(200);
                     res.send({
                         Error: errors.Body.InvalidType.PageSizeOrCount,
                     });
                 }
                 if (typeof req.body.Paging.PageCount !== "number") {
-                    res.status(400);
+                    res.status(200);
                     res.send({
                         Error: errors.Body.InvalidType.PageSizeOrCount,
                     });
@@ -64,7 +65,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                 Error: {
                     Error: false,
                 },
-                Found: result,
+                Found: result.map((v) => BackwardCompatibility.toLatestGen(v)),
             });
         }
     }))
@@ -75,12 +76,14 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
         else {
             const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
             if (creds.success) {
+                // Chack for accepted like values
                 if (req.body.Like === -1 || req.body.Like === 0 || req.body.Like === 1) {
                     const article = yield db
                         .db("texter")
                         .collection("articles")
                         .findOne(req.body.Selector);
                     let likeValue = 0;
+                    // Making like a switch
                     if (article.Likers[req.body.Credentials.UserId] !== req.body.Like) {
                         likeValue = req.body.Like;
                     }
@@ -101,7 +104,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                         });
                     }
                     catch (e) {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: {
                                 Error: true,
@@ -132,7 +135,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                                     modifyList[modifyPropName] = modifyValue;
                                 }
                                 else {
-                                    res.status(400);
+                                    res.status(200);
                                     res.send({
                                         Error: {
                                             Error: true,
@@ -161,7 +164,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                         }
                     }
                     else {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: {
                                 Error: true,
@@ -187,7 +190,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                 }
             }
             else {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: creds.error });
             }
         }
@@ -195,21 +198,18 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
         .post("/create", (req, res) => __awaiter(this, void 0, void 0, function* () {
         const creds = yield checkCredentials(req.body.Credentials, db, passRegEx, errors);
         if (typeof req.body.New === "undefined") {
-            res.status(400);
-            console.log('new');
+            res.status(200);
             res.send({ Error: errors.Body.MissingAny });
             return;
         }
-        else if (typeof req.body.New.Title === "undefined") {
-            res.status(400);
-            console.log('title');
-            res.send({ Error: errors.Body.MissingAny });
+        else if (typeof req.body.New.Title === "undefined" || req.body.New.Title.trim().length === 0) {
+            res.status(200);
+            res.send({ Error: new credentialsChecker_1.Error("Title is missing!", "A title is required for a post") });
             return;
         }
-        else if (typeof req.body.New.Content === "undefined") {
-            res.status(400);
-            console.log('content');
-            res.send({ Error: errors.Body.MissingAny });
+        else if (typeof req.body.New.Content === "undefined" || req.body.New.Content.trim().length === 0) {
+            res.status(200);
+            res.send({ Error: new credentialsChecker_1.Error("Content is missing!", "A content is required for a post") });
             return;
         }
         else if (creds.success) {
@@ -220,13 +220,14 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
                 .find({ ID: newId })
                 .toArray();
             if (r.length > 0) {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.ArticleExists });
             }
             else {
                 const article = {
                     Content: req.body.New.Content,
                     CreatorId: req.body.Credentials.UserId,
+                    Date: new Date().getTime(),
                     ID: newId,
                     Likers: {
                         [req.body.Credentials.UserId]: 1,
@@ -256,7 +257,7 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
             }
         }
         else {
-            res.status(400);
+            res.status(200);
             res.send({
                 Error: creds.error,
             });
@@ -296,10 +297,22 @@ function GetArticlesRouter(db, errors, checkCredentials, passRegEx) {
             });
         }
         else {
-            res.status(400);
+            res.status(200);
             res.send({ Error: creds.error });
         }
     }));
 }
 exports.GetArticlesRouter = GetArticlesRouter;
+class BackwardCompatibility {
+    static toGen2(article) {
+        if (typeof article.Date !== "number") {
+            article.Date = 0;
+        }
+        return article;
+    }
+    static toLatestGen(article) {
+        return this.toGen2(article);
+    }
+}
+exports.BackwardCompatibility = BackwardCompatibility;
 //# sourceMappingURL=articlesRouter.js.map

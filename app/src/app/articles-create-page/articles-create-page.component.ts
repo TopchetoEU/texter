@@ -23,7 +23,7 @@ export class ArticlesCreatePageComponent implements OnInit {
 
   submit(title: string, content: string) {
     if (this.gl.loggedIn) {
-      this.db.Articles.Create(
+      this.db.createArticle(
         {
           Title: title,
           Content: content
@@ -32,14 +32,14 @@ export class ArticlesCreatePageComponent implements OnInit {
           UserId: this.gl.userId,
           Password: this.gl.password
         })
-        .then((v) => {
+        .subscribe((v) => {
           this.nots.createNotification(new Notification(
             'Success!',
             'The article ' + title + ' was created successfully',
             NotificationType.Success
           ));
           this.router.navigate(['article/' + v]);
-        }).catch((e: Error) => {
+        }, (e: Error) => {
           this.nots.createNotification(new Notification(
             'ERROR!',
             e.ErrorDetails.More,

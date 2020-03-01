@@ -23,7 +23,7 @@ export function GetUsersRouter(
     return Router()
         .post("/get", async (req, res) => {
             if (typeof req.body.Selector === "undefined") {
-                res.status(400);
+                res.status(200);
                 res.send({
                     Error: errors.Body.Missing.Selector,
                 });
@@ -35,13 +35,13 @@ export function GetUsersRouter(
 
                 if (req.body.DoPaging === true) {
                     if (typeof req.body.Paging.PageSize !== "number") {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
                     }
                     if (typeof req.body.Paging.PageCount !== "number") {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
@@ -64,64 +64,39 @@ export function GetUsersRouter(
             const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
             if (creds.success) {
                 if ((req.body.Follow === true) && typeof req.body.Selector === "object") {
-                    const coll = db.db("texter").collection("users");
+                    const collection = db.db("texter").collection("users");
 
-                    const selectorA: any = Object.create(req.body.Selector);
-                    selectorA.Followers = { $in: [req.body.Credentials.UserId] };
+                    const unfollowSelector: any = Object.create(req.body.Selector);
+                    unfollowSelector.Followers = { $in: [req.body.Credentials.UserId] };
 
-                    const selectorB: any = Object.create(req.body.Selector);
-                    selectorB.Followers = { $nin: [req.body.Credentials.UserId] };
+                    const followSelector: any = Object.create(req.body.Selector);
+                    followSelector.Followers = { $nin: [req.body.Credentials.UserId] };
 
-                    // Marks all users to unfollow
-                    coll.update(selectorA, {
-                        $set: {
-                            Debug: DebugStates.Unfollow,
-                        },
-                    });
-
-                    // Marks all users to follow
-                    coll.update(selectorB, {
-                        $set: {
-                            Debug: DebugStates.Follow,
-                        },
-                    });
+                    const unfollowIds: number[] = (await collection.find(unfollowSelector).toArray()).map((v) => v.ID);
+                    const followIds: number[] = (await collection.find(followSelector).toArray()).map((v) => v.ID);
 
                     // Unfollows all users marked so
-                    coll.update({ Debug: DebugStates.Unfollow }, {
+                    collection.updateMany(unfollowSelector, {
                         $pull: {
                             Followers: req.body.Credentials.UserId,
                         },
                     });
 
-                    // Follows all users maked so
-                    coll.update({ Debug: DebugStates.Follow }, {
+                    // Follows all users marked so
+                    collection.updateMany(followSelector, {
                         $push: {
                             Followers: req.body.Credentials.UserId,
                         },
                     });
 
-                    const unfollow = await coll.find({ Debug: 1 }).toArray();
-                    const follow = await coll.find({ Debug: 0 }).toArray();
-                    const modF: any[] = [];
-                    const modUf: any[] = [];
-
-                    unfollow.forEach((element) => {
-                        modUf.push(element.ID);
+                    collection.updateMany({ ID: req.body.Credentials.UserId }, {
+                        $push: { Following: { $each: followIds } },
                     });
 
-                    follow.forEach((element) => {
-                        modF.push(element.ID);
+                    collection.updateMany({ ID: req.body.Credentials.UserId }, {
+                        $pull: { Following: { $in: unfollowIds } },
                     });
 
-                    await coll.updateOne({ ID: req.body.Credentials.UserId }, {
-                        $push: { Following: { $each: modF } },
-                    });
-                    await coll.updateOne({ ID: req.body.Credentials.UserId }, {
-                        $pull: { Following: { $in: modUf } },
-                    });
-                    await coll.updateOne({ ID: req.body.Credentials.UserId }, {
-                        $set: { Debug: DebugStates.None },
-                    });
                     res.send({
                         Error: false,
                     });
@@ -148,7 +123,7 @@ export function GetUsersRouter(
                                         modifyList[modifyPropName] = modifyValue;
                                     }
                                 } else {
-                                    res.status(400);
+                                    res.status(200);
                                     res.send({
                                         Error: {
                                             Error: true,
@@ -178,7 +153,7 @@ export function GetUsersRouter(
                             });
                         }
                     } else {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: {
                                 Error: true,
@@ -203,7 +178,7 @@ export function GetUsersRouter(
                 }
 
             } else {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: creds.error });
             }
         })
@@ -226,23 +201,23 @@ export function GetUsersRouter(
             }
 
             if (typeof req.body.New === "undefined") {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
             } else if (
                 typeof req.body.New.Username === "undefined" ||
                 req.body.New.Username === "") {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
             } else if (
                 typeof req.body.New.Password === "undefined" ||
                 req.body.New.Password === "") {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
             } else if ((req.body.New.Password as string).match(passRegEx)?.length !== 1) {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.Credentials.InvalidFormat });
             } else {
                 const newId = await getNextFreeId();
@@ -253,7 +228,7 @@ export function GetUsersRouter(
                     .find({ Username: req.body.New.Username })
                     .toArray();
                 if (sameUsers.length > 0) {
-                    res.status(400);
+                    res.status(200);
                     res.send({ Error: errors.Body.UserExists });
                 } else {
                     const user = {

@@ -2,11 +2,21 @@ import { MongoClient } from "mongodb";
 import sha256 from "sha256";
 
 export class Error {
+    public static readonly noError: Error = { Error: false };
+
     public Error: boolean;
-    public ErrorDetails: {
+    public ErrorDetails?: {
         General: string,
         More: string,
     };
+
+    public constructor(general: string, more: string) {
+        this.ErrorDetails = {
+            General: general,
+            More: more,
+        };
+        this.Error = true;
+    }
 }
 
 // tslint:disable-next-line: max-classes-per-file
@@ -43,7 +53,7 @@ export const DefaultCredentialsChecker = async (
         return Promise.resolve({ error: errors.Body.MoreOrLessThanOne.Users, success: false });
     } else if (typeof creds.Password !== "string") {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
-    } else if (creds.Password.match(passRegEx).length !== 1) {
+    } else if (creds.Password.match(passRegEx) && creds.Password.match(passRegEx).length !== 1) {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });
     } else if (creds.Password.length < 8 || creds.Password.length > 64) {
         return Promise.resolve({ error: errors.Body.Credentials.InvalidFormat, success: false });

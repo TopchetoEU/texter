@@ -23,7 +23,7 @@ export class LoginPageComponent implements OnInit {
     ngOnInit() {
     }
 
-    async login(name, password) {
+    login(name, password) {
         const err = (e: Error) => {
             this.notifications.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
             this.done = true;
@@ -35,21 +35,20 @@ export class LoginPageComponent implements OnInit {
             return;
         };
         this.done = false;
-        try {
-            const user =  await this.db.Users.Get.ByName(name);
-            const error = await this.db.checkCredentials({ Password: password, UserId: user.ID });
-
-            if (error.success) {
-                this.globals.userId = user.ID;
-                this.globals.password = password;
-                this.globals.loggedIn = true;
-                succ();
-            } else {
-                err(error.error);
-            }
-        } catch (e) {
+        this.db.getUserBySelector({ Username: name }).subscribe(user => {
+            this.db.checkCredentials({ Password: password, UserId: user.ID }).subscribe(error => {
+                if (error.success) {
+                    this.globals.userId = user.ID;
+                    this.globals.password = password;
+                    this.globals.loggedIn = true;
+                    succ();
+                } else {
+                    err(error.error);
+                }
+            });
+        },
+        (e) => {
             err(e);
-        }
-
+        });
     }
 }

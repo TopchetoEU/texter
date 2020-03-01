@@ -62,9 +62,13 @@ export class AppComponent implements AfterViewInit {
 
   async updateSearchElements(el: HTMLInputElement) {
     if (el.value.split(' ').join('').length > 0) {
-      const s = await this.db.searchAll(el.value);
-      this.foundUsers = s.Users;
-      this.foundArticles = s.Articles;
+      this.db.searchAll(el.value)
+        .subscribe(
+          searched => {
+            this.foundUsers = searched.Users;
+            this.foundArticles = searched.Articles;
+          }
+        );
     } else {
       this.foundUsers = [];
       this.foundArticles = [];

@@ -1,6 +1,6 @@
-<igx-card>
+<igx-card *ngIf="article">
     <igx-card-header>
-        <h3>{{article.Title}}</h3>
+        <h5>{{article.Title}}</h5>
     </igx-card-header>
     <igx-card-content>
         <pre style="font: inherit">{{article.Content}}</pre>

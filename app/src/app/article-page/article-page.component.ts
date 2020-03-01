@@ -8,9 +8,8 @@ import { DatabaseService, Article, User } from '../database.service';
   styleUrls: ['./article-page.component.scss']
 })
 export class ArticlePageComponent implements OnInit {
-  article: Article;
+  articleId: string;
   creator: User;
-  done = false;
 
   constructor(
     private router: ActivatedRoute,
@@ -18,10 +17,6 @@ export class ArticlePageComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    const articleId = this.router.snapshot.paramMap.get('id');
-
-    this.article = await this.db.Articles.Get.ById(articleId);
-    this.creator = await this.db.Users.Get.ById(this.article.OwnerId);
-    this.done = true;
+    this.articleId = this.router.snapshot.paramMap.get('id');
   }
 }

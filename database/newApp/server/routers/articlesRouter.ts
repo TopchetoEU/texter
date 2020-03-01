@@ -1,8 +1,8 @@
-import { Router } from "express";
+import e, { Router } from "express";
 import { MongoClient } from "mongodb";
 import sha256 from "sha256";
 import { ErrorsType } from "../../errors";
-import { CredentialsChecker } from "../credentialsChecker";
+import { CredentialsChecker, Error } from "../credentialsChecker";
 
 enum Changeables {
     Title,
@@ -17,12 +17,12 @@ export function GetArticlesRouter(
     return Router()
         .post("/get", async (req, res) => {
             if (typeof req.body.Selector === "undefined") {
-                res.status(400);
+                res.status(200);
                 res.send({
                     Error: errors.Body.Missing.Selector,
                 });
             } else if (typeof req.body.Selector !== "object") {
-                res.status(400);
+                res.status(200);
                 res.send({
                     Error: errors.Body.InvalidType.Selector,
                 });
@@ -34,13 +34,13 @@ export function GetArticlesRouter(
                     .project({ _id: 0 });
                 if (req.body.DoPaging === true) {
                     if (typeof req.body.Paging.PageSize !== "number") {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
                     }
                     if (typeof req.body.Paging.PageCount !== "number") {
-                        res.status(400);
+                        res.status(200);
                         res.send({
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
@@ -54,7 +54,7 @@ export function GetArticlesRouter(
                     Error: {
                         Error: false,
                     },
-                    Found: result,
+                    Found: result.map((v) => BackwardCompatibility.toLatestGen(v)),
                 });
             }
         })
@@ -93,7 +93,7 @@ export function GetArticlesRouter(
                                 UpdatedElementCount: r.result.ok === 1,
                             });
                         } catch (e) {
-                            res.status(400);
+                            res.status(200);
                             res.send({
                                 Error: {
                                     Error: true,
@@ -122,7 +122,7 @@ export function GetArticlesRouter(
                                     if (modifiableValid) {
                                         modifyList[modifyPropName] = modifyValue;
                                     } else {
-                                        res.status(400);
+                                        res.status(200);
                                         res.send({
                                             Error: {
                                                 Error: true,
@@ -150,7 +150,7 @@ export function GetArticlesRouter(
                                 });
                             }
                         } else {
-                            res.status(400);
+                            res.status(200);
                             res.send({
                                 Error: {
                                     Error: true,
@@ -174,7 +174,7 @@ export function GetArticlesRouter(
                         });
                     }
                 } else {
-                    res.status(400);
+                    res.status(200);
                     res.send({ Error: creds.error });
                 }
             }
@@ -182,16 +182,16 @@ export function GetArticlesRouter(
         .post("/create", async (req, res) => {
             const creds = await checkCredentials(req.body.Credentials, db, passRegEx, errors);
             if (typeof req.body.New === "undefined") {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: errors.Body.MissingAny });
                 return;
-            } else if (typeof req.body.New.Title === "undefined") {
-                res.status(400);
-                res.send({ Error: errors.Body.MissingAny });
+            } else if (typeof req.body.New.Title === "undefined" || req.body.New.Title.trim().length === 0) {
+                res.status(200);
+                res.send({ Error: new Error("Title is missing!", "A title is required for a post")});
                 return;
-            } else if (typeof req.body.New.Content === "undefined") {
-                res.status(400);
-                res.send({ Error: errors.Body.MissingAny });
+            } else if (typeof req.body.New.Content === "undefined" || req.body.New.Content.trim().length === 0) {
+                res.status(200);
+                res.send({ Error: new Error("Content is missing!", "A content is required for a post")});
                 return;
             } else if (creds.success) {
                 const newId = sha256(req.body.New.Title);
@@ -201,12 +201,13 @@ export function GetArticlesRouter(
                     .find({ ID: newId })
                     .toArray();
                 if (r.length > 0) {
-                    res.status(400);
+                    res.status(200);
                     res.send({ Error: errors.Body.ArticleExists });
                 } else {
                     const article = {
                         Content: req.body.New.Content,
                         CreatorId: req.body.Credentials.UserId,
+                        Date: new Date().getTime(),
                         ID: newId,
                         Likers: {
                             [req.body.Credentials.UserId]: 1,
@@ -235,7 +236,7 @@ export function GetArticlesRouter(
                     });
                 }
             } else {
-                res.status(400);
+                res.status(200);
                 res.send({
                     Error: creds.error,
                 });
@@ -275,8 +276,22 @@ export function GetArticlesRouter(
                     },
                 });
             } else {
-                res.status(400);
+                res.status(200);
                 res.send({ Error: creds.error });
             }
         });
+}
+
+export class BackwardCompatibility {
+    public static toGen2(article: any) {
+        if (typeof article.Date !== "number") {
+            article.Date = 0;
+        }
+
+        return article;
+    }
+
+    public static toLatestGen(article: any) {
+        return this.toGen2(article);
+    }
 }

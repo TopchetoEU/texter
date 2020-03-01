@@ -36,10 +36,10 @@ export class SigninPageComponent {
     }
 
     this.done = false;
-    this.db.Users.Create({ Username: name, Password: password })
-      .then(() => {
+    this.db.createUser({ Username: name, Password: password })
+      .subscribe(() => {
         succ();
-      }).catch((e) => {
+      }, (e) => {
         err(e);
       });
   }

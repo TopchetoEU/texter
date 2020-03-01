@@ -6,7 +6,7 @@ igx-card {
         width: 100%;
     }
     igx-card-header {
-        h3 {
+        h5 {
             padding: 0px;
             margin: 0;
             text-align: center;
@@ -38,6 +38,7 @@ igx-card {
             &.activated {
                 color: #455fd1;
             }
+            cursor: pointer;
         }
     }
 }

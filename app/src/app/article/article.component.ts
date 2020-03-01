@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, NgZone } from '@angular/core';
 import { Article, DatabaseService, Like, Error } from '../database.service';
 import { NotificationsService, Notification, NotificationType } from '../notifications.service';
 import { GlobalsService } from '../globals.service';
@@ -9,10 +9,20 @@ import { GlobalsService } from '../globals.service';
   styleUrls: ['./article.component.scss']
 })
 export class ArticleComponent implements OnInit {
-  @Input()
+  // tslint:disable-next-line: variable-name
   public article: Article;
-
   public username = '';
+
+  @Input()
+  public get articleId(): string {
+    return this._articleId;
+  }
+  public set articleId(value: string) {
+    this._articleId = value;
+    this.refresh();
+  }
+  // tslint:disable-next-line: variable-name
+  _articleId: string;
 
   // tslint:disable-next-line: variable-name
   private _liked = false;
@@ -33,7 +43,6 @@ export class ArticleComponent implements OnInit {
   public get likeAmount(): number {
     return this._likeAmount + (this.liked ? 1 : 0);
   }
-
   public get dislikeAmount(): number {
     return this._dislikeAmount + (this.disliked ? 1 : 0);
   }
@@ -41,28 +50,44 @@ export class ArticleComponent implements OnInit {
   constructor(
     private notifs: NotificationsService,
     public db: DatabaseService,
-    private globals: GlobalsService
+    private globals: GlobalsService,
+    private zone: NgZone
   ) { }
 
-  async ngOnInit() {
-    this.username = (await this.db.Users.Get.ById(this.article.OwnerId)).Username;
-    const artcl = await this.db.Articles.Get.ById(this.article.ID);
+  ngOnInit() {
+  }
 
-    if (this.globals.loggedIn) {
+  refresh = () => {
+    const t = this;
+    this.zone.run(() => {
+      t.db.getArticleBySelector({ ID: this.articleId }).subscribe(
+        artcl => {
+          this.article = artcl;
 
-      this._liked =    artcl.Likers[this.globals.userId] === 1;
-      this._disliked = artcl.Likers[this.globals.userId] === -1;
-    }
+          t.db.getUserBySelector({ ID: artcl.OwnerId }).subscribe(
+            user => {
+              console.log(user);
+              t.username = user.Username;
 
-    for (const user in artcl.Likers) {
-      if (Number.parseFloat(user) !== this.globals.userId) {
-        if (artcl.Likers[user] === -1) {
-          this._dislikeAmount++;
-        } else if (artcl.Likers[user] === 1) {
-          this._likeAmount++;
+              if (t.globals.loggedIn) {
+                t._liked = artcl.Likers[t.globals.userId] === 1;
+                t._disliked = artcl.Likers[t.globals.userId] === -1;
+              }
+
+              for (const user1 in artcl.Likers) {
+                if (Number.parseFloat(user1) !== t.globals.userId) {
+                  if (artcl.Likers[user1] === -1) {
+                    t._dislikeAmount++;
+                  } else if (artcl.Likers[user1] === 1) {
+                    t._likeAmount++;
+                  }
+                }
+              }
+            }
+          );
         }
-      }
-    }
+      );
+    });
   }
 
   like(id: string, like: number) {
@@ -72,7 +97,7 @@ export class ArticleComponent implements OnInit {
       newLike = 0;
     }
     const err = (e: Error) => {
-        this.notifs.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
+      this.notifs.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
     };
     if (!this.globals.loggedIn) {
       err(new Error('Log in.', 'You must be logged in to newLike and dislike content.'));
@@ -80,13 +105,12 @@ export class ArticleComponent implements OnInit {
       this._liked = newLike === 1;
       this._disliked = newLike === -1;
 
-      this.db.Articles.Change({ ID: id }, {
+      this.db.changeArticles({ ID: id }, {
+        Like: like,
+      }, {
         UserId: this.globals.userId,
         Password: this.globals.password
-      }, {
-        Like: like,
-        DoModify: true,
-      }).catch((e) => {
+      }).subscribe(null, (e) => {
         err(e);
       });
     }

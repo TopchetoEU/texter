@@ -1,8 +1,1 @@
-<igx-linear-bar *ngIf="!done" [indeterminate]="true"></igx-linear-bar>
-<div *ngIf="done">
-    <h2>{{article.Title}} </h2>
-    <div>
-        {{article.Content}}
-    </div>
-    <h5>By <a routerLink="/user/{{creator.ID}}">{{creator.Username}}</a> </h5>
-</div>
+<app-article [articleId]="articleId"></app-article>
