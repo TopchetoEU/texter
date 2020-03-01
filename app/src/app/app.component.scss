@@ -236,6 +236,11 @@ button {
         padding: 10px;
         padding-top: 100px;
     }
+    .search {
+        display: block;
+        width: 100%;
+        margin: 0 10px;
+    }
 
     .menu {
         top: 0;
@@ -253,10 +258,6 @@ button {
             .bar {
                 display: contents;
                 flex: 1 1 auto;
-                .searchBar {
-                    display: block;
-                    width: 100%;
-                }
             }
         }
     }

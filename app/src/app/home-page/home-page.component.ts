@@ -40,7 +40,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
           PageCount: this.index,
         }
       }).subscribe(articles => {
-        console.log(this.articles);
         if (articles.length > 0) {
           articles.forEach(v => {
             this.articles.push(v);

@@ -12,7 +12,7 @@
         </button>
         <div class="bar">
             <igx-input-group type="search" class="search">
-                <input igxInput type="search" type="text" (input)="updateSearchElements(search)" name="search" #search>
+                <input igxInput autocomplete="off" type="search" type="text" (input)="updateSearchElements(search)" name="search" #search>
                 <label igxLabel for="search">Search users and articles</label>
             </igx-input-group>
             <div class="iconCont" *ngIf="gs.loggedIn">

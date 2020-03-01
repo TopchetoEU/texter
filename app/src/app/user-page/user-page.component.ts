@@ -16,19 +16,20 @@ export class UserPageComponent implements OnInit {
   done = false;
   private _followers = 0;
   private _following = 0;
+  private _articleAmount = 0;
   private _followed = false;
 
   public get followers() { return this._followers + (this.followed ? 1 : 0); }
-  public get following() { return this._following; }
+  public get following() { return this._following + (this.followed && this.gs.userId === this._userId ? 1 : 0); }
+  public get articleAmount() { return this._articleAmount; }
   public get followed() { return this._followed; }
-
 
   constructor(
     private db: DatabaseService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private gs: GlobalsService,
-    private nots: NotificationsService
+    private nots: NotificationsService,
+    public gs: GlobalsService,
   ) { }
 
   async ngOnInit() {
@@ -47,25 +48,41 @@ export class UserPageComponent implements OnInit {
       this._followed = true;
     }
 
-    this._followers = this.user.Followers.length;
+    this._following = this.user.Following.length;
+    if (this.user.Following.indexOf(this.gs.userId) > -1) {
+      this._following--;
+    }
+
+    this._articleAmount = this.user.Articles.length;
   }
 
   follow() {
     this._followed = !this._followed;
 
-    this.db.changeUsers({
-      ID: this._userId
-    }, {
-      Follow: true
-    }, {
-      Password: this.gs.password,
-      UserId: this.gs.userId
-    }).subscribe(
-      null, (err: Error) => {
-        this.nots.createNotification(new Notification('ERROR!', err.ErrorDetails.More, NotificationType.Error));
-        this._followed = !this._followed;
-      }
-    );
+    if (this.gs.loggedIn) {
+      this.db.changeUsers({
+        ID: this._userId
+      }, {
+        Follow: true
+      }, {
+        Password: this.gs.password,
+        UserId: this.gs.userId
+      }).subscribe({
+        error: (err: Error) => {
+          this.nots.createNotification(new Notification('ERROR!', err.ErrorDetails.More, NotificationType.Error));
+          this._followed = !this._followed;
+        }
+      });
+    } else {
+      this.nots.createNotification(
+        new Notification(
+          'ERROR!',
+          'You must be logged in to follow ' + this.user.Username + '.',
+          NotificationType.Error
+        )
+      );
+      this._followed = !this._followed;
+    }
   }
 
   update() {
@@ -77,9 +94,24 @@ export class UserPageComponent implements OnInit {
         this.user = user;
         this.db.getArticlesBySelector({ OwnerId: this._userId }).subscribe(
           articles => this.articles = articles
-        );
+          );
+        this.updateStats();
         this.done = true;
       }
     );
+  }
+
+  removeArticle(articleId: string) {
+    this.db.removeArticles({ ID: articleId }, {
+      Password: this.gs.password,
+      UserId: this.gs.userId
+    }).subscribe({
+      next: () => {
+        this.nots.createNotification(new Notification('Deleted article', 'Successfully deleted article', NotificationType.Success));
+      },
+      error: (e: Error) => {
+        this.nots.createNotification(new Notification('ERROR!', e.ErrorDetails.More, NotificationType.Error));
+      }
+    });
   }
 }

@@ -17,11 +17,14 @@ igx-card {
     igx-card-footer {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         width: 100%;
         .owner {
-            flex: 1 1 auto;
             text-align: right;
             font-size: 10px;
+            outline: 0;
+            cursor: pointer;
+            user-select: none;
         }
         .opinion {
             position: relative;
@@ -35,10 +38,14 @@ igx-card {
             margin: 0 5px;
             outline: 0;
             color: #444;
+            user-select: none;
             &.activated {
                 color: #455fd1;
             }
             cursor: pointer;
+        }
+        * {
+            user-select: none;
         }
     }
 }

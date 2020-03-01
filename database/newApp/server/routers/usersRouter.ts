@@ -4,31 +4,34 @@ import sha256 from "sha256";
 import { ErrorsType } from "../../errors";
 import { CredentialsChecker } from "../credentialsChecker";
 
-enum Changeables {
+/**
+ * All changeable properties in Articles
+ */
+enum Changeable {
     Password,
-    Username,
-    UserId,
 }
 
-enum DebugStates {
-    Follow,
-    Unfollow,
-    None = null,
-}
-
+/**
+ * Returns user router with get, change, create and remove paths
+ * @param db The mongoDb client
+ * @param errors A list of errors
+ * @param checkCredentials Function, checking credentials
+ * @param passRegEx Password regEx
+ */
 export function GetUsersRouter(
     db: MongoClient, errors: ErrorsType,
     checkCredentials: CredentialsChecker,
     passRegEx: RegExp): Router {
     return Router()
         .post("/get", async (req, res) => {
+            // Types check
             if (typeof req.body.Selector === "undefined") {
                 res.status(200);
                 res.send({
                     Error: errors.Body.Missing.Selector,
                 });
             } else {
-                let a = db
+                let cursor = db
                     .db("texter")
                     .collection("users")
                     .find(req.body.Selector);
@@ -46,12 +49,12 @@ export function GetUsersRouter(
                             Error: errors.Body.InvalidType.PageSizeOrCount,
                         });
                     } else {
-                        a = a.limit(req.body.Paging.PageSize);
-                        a = a.skip(req.body.Paging.PageSize * req.body.Paging.PageCount);
+                        cursor = cursor.limit(req.body.Paging.PageSize);
+                        cursor = cursor.skip(req.body.Paging.PageSize * req.body.Paging.PageCount);
                     }
                 }
 
-                const result = await a.toArray();
+                const result = await cursor.toArray();
                 res.send({
                     Error: {
                         Error: false,
@@ -89,10 +92,12 @@ export function GetUsersRouter(
                         },
                     });
 
+                    // Adds all followed as marked so
                     collection.updateMany({ ID: req.body.Credentials.UserId }, {
                         $push: { Following: { $each: followIds } },
                     });
 
+                    // Removes all unfollowed as marked so
                     collection.updateMany({ ID: req.body.Credentials.UserId }, {
                         $pull: { Following: { $in: unfollowIds } },
                     });
@@ -109,7 +114,7 @@ export function GetUsersRouter(
                                 const modifyValue = req.body.Modify[modifyPropName];
                                 let modifiableValid = false;
 
-                                for (const key in Changeables) {
+                                for (const key in Changeable) {
                                     if (modifyPropName === key) {
                                         modifiableValid = true;
                                         break;

@@ -86,6 +86,20 @@ export class DatabaseService {
       });
     });
   }
+  public removeArticles(selector: any, credentials: Credentials): Observable<number> {
+    return new Observable(ob => {
+      this.http.post<any>(url + 'articles/delete', {
+        Credentials: credentials,
+        Selector: selector
+      }).subscribe(val => {
+        if (val.Error.Error) {
+          ob.error(val.Error);
+        } else {
+          ob.next(val.Deleted);
+        }
+      });
+    });
+  }
 
   public getAllUsers(): Observable<User[]> {
     return this.http.post<User[]>(url + 'users/get', { Selector: {} });
@@ -165,10 +179,9 @@ export class DatabaseService {
     return this.http.post<CredentialsCheckResponse>(url + 'others/checkCreds', { Credentials: credentials });
   }
 
+
   public searchAll(value: string): Observable<{ Users: User[], Articles: Article[] }> {
     const regex = '(' + value.split(/[, ]/g).join(')(') + ')';
-
-    console.log(regex);
 
     return new Observable(ob => {
       this.getUsersBySelector(
@@ -254,6 +267,7 @@ export class Article {
   public Content: string;
   public OwnerId: number;
   public Likers: any;
+  public Date: number;
 }
 
 export class Error {

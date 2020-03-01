@@ -9,9 +9,23 @@ import { GlobalsService } from '../globals.service';
   styleUrls: ['./article.component.scss']
 })
 export class ArticleComponent implements OnInit {
-  // tslint:disable-next-line: variable-name
   public article: Article;
   public username = '';
+
+  private months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
 
   @Input()
   public get articleId(): string {
@@ -21,16 +35,11 @@ export class ArticleComponent implements OnInit {
     this._articleId = value;
     this.refresh();
   }
-  // tslint:disable-next-line: variable-name
   _articleId: string;
 
-  // tslint:disable-next-line: variable-name
   private _liked = false;
-  // tslint:disable-next-line: variable-name
   private _likeAmount = 0;
-  // tslint:disable-next-line: variable-name
   private _disliked = false;
-  // tslint:disable-next-line: variable-name
   private _dislikeAmount = 0;
 
   public get liked(): boolean {
@@ -57,6 +66,16 @@ export class ArticleComponent implements OnInit {
   ngOnInit() {
   }
 
+  public toDateFormat(uch: number) {
+    const date = new Date(uch);
+    return `${(date.getDay() + 1)}` +
+      `${(date.getDay() + 1) % 10 === 1 ?
+        'st' : ((date.getDay() + 1) % 10 === 2 ?
+        'nd' : ((date.getDay() + 1) % 10 === 3 ?
+        'rd' : 'th'))}` +
+      ` of ${this.months[date.getMonth()]}, ${date.getFullYear()}`;
+  }
+
   refresh = () => {
     const t = this;
     this.zone.run(() => {
@@ -66,7 +85,6 @@ export class ArticleComponent implements OnInit {
 
           t.db.getUserBySelector({ ID: artcl.OwnerId }).subscribe(
             user => {
-              console.log(user);
               t.username = user.Username;
 
               if (t.globals.loggedIn) {
@@ -100,7 +118,7 @@ export class ArticleComponent implements OnInit {
       this.notifs.createNotification(new Notification(e.ErrorDetails.General, e.ErrorDetails.More, NotificationType.Error));
     };
     if (!this.globals.loggedIn) {
-      err(new Error('Log in.', 'You must be logged in to newLike and dislike content.'));
+      err(new Error('Log in.', 'You must be logged in to like and dislike content.'));
     } else {
       this._liked = newLike === 1;
       this._disliked = newLike === -1;
@@ -110,9 +128,10 @@ export class ArticleComponent implements OnInit {
       }, {
         UserId: this.globals.userId,
         Password: this.globals.password
-      }).subscribe(null, (e) => {
+      }).subscribe({
+        error: (e) => {
         err(e);
-      });
+      }});
     }
   }
 }

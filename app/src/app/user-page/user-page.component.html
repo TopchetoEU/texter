@@ -1,10 +1,21 @@
 <igx-linear-bar *ngIf="!done" [indeterminate]="true"></igx-linear-bar>
 <div *ngIf="done" style="user-select: none;">
-    <h2>{{user.Username}} </h2>
-    Followers: {{followers}}
-    <button igxButton igxRipple [igxRippleCentered]="false" (click)="follow()">Follow</button>
-    <h3>All articles:</h3>
-    <mat-action-list>
-        <mat-list-item style="color: black" *ngFor="let article of articles" routerLink="/article/{{article.ID}}">{{article.Title}}</mat-list-item>
-    </mat-action-list>
+    <h2 style="text-align: center;">{{user.Username}} </h2>
+    <div class="moreInfo">
+        <div class="stats">
+            <span class="stat">{{articleAmount}} articles</span>
+            <span class="stat">{{followers}} followers</span>
+            <span class="stat">{{following}} following</span>
+        </div>
+        <div class="followContainer">
+            <button igxButton igxRipple [igxRippleCentered]="false" (click)="follow()">{{followed ? 'Unfollow' : 'Follow'}}</button>
+        </div>
+    </div>
+
+    <h3 style="text-align: center;">All articles:</h3>
+    <div>
+        <div class="article" *ngFor="let article of articles" routerLink="/article/{{article.ID}}">
+            <span>{{article.Title}}</span>
+        </div>
+    </div>
 </div>
